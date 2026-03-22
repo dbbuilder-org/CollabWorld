@@ -187,7 +187,7 @@ Mux processes → fires webhook → /api/v1/webhooks/mux
 
 - Templates written as React Email components in `components/email/`
 - Sent via `resend.emails.send()` in API routes or background jobs
-- Domain: `@collabworld.io` (configure DNS on Resend)
+- Domain: `@collabworld.servicevision.io` (configure DNS on Resend)
 - Transactional only in Phase 1; marketing emails deferred
 
 ---

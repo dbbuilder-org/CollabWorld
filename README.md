@@ -93,8 +93,8 @@ Once critical mass is achieved:
 
 ## Deployment
 
-- **Production:** https://collabworld.io (auto-deploys from `main`)
-- **Staging:** https://staging.collabworld.io (auto-deploys from `staging`)
+- **Production:** https://collabworld.servicevision.io (auto-deploys from `main`)
+- **Staging:** https://staging.collabworld.servicevision.io (auto-deploys from `staging`)
 
 See [render.yaml](render.yaml) for full IaC configuration.
 

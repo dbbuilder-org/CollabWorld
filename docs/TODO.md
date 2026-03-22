@@ -105,7 +105,7 @@
 
 - [ ] **Clerk:** Create project, configure `collabworld` app, enable Google OAuth, create webhook pointing to staging URL
 - [ ] **Mux:** Create account, get API keys, configure webhook endpoint
-- [ ] **Resend:** Create account, add `collabworld.io` domain (or dev domain), get API key
+- [ ] **Resend:** Create account, add `collabworld.servicevision.io` domain (or dev domain), get API key
 - [ ] **Upstash:** Create Redis database, copy REST URL + token
 - [ ] **Stripe:** Create account, enable Stripe Connect, create `premium` subscription price ($14.99/month)
 

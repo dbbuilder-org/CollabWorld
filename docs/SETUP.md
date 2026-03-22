@@ -62,7 +62,7 @@ MUX_WEBHOOK_SECRET=...
 Create account at https://resend.com
 ```env
 RESEND_API_KEY=re_...
-RESEND_FROM_EMAIL="Collab World <hello@collabworld.io>"
+RESEND_FROM_EMAIL="Collab World <hello@collabworld.servicevision.io>"
 ```
 
 ### 2.5 Stripe (Payments)
@@ -87,7 +87,7 @@ R2_ACCOUNT_ID=...
 R2_ACCESS_KEY_ID=...
 R2_SECRET_ACCESS_KEY=...
 R2_BUCKET_NAME=collabworld-assets
-R2_PUBLIC_URL=https://assets.collabworld.io
+R2_PUBLIC_URL=https://assets.collabworld.servicevision.io
 ```
 
 ### 2.8 App
@@ -245,8 +245,8 @@ render deploy --service collabworld-web
 
 Environment variables are set in the Render dashboard (copy from `.env.local`, excluding local-only vars).
 
-Production URL: https://collabworld.io
-Staging URL: https://staging.collabworld.io
+Production URL: https://collabworld.servicevision.io
+Staging URL: https://staging.collabworld.servicevision.io
 
 ---
 

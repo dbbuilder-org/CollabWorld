@@ -272,8 +272,8 @@
 | ID | Title | Type | SP |
 |----|-------|------|----|
 | CW-125 | Production env vars configured in Render | DevOps | 1 |
-| CW-126 | Custom domain + SSL (collabworld.io) | DevOps | 1 |
-| CW-127 | Resend domain verification (collabworld.io) | DevOps | 1 |
+| CW-126 | Custom domain + SSL (collabworld.servicevision.io) | DevOps | 1 |
+| CW-127 | Resend domain verification (collabworld.servicevision.io) | DevOps | 1 |
 | CW-128 | Stripe production mode + Connect live | DevOps | 2 |
 | CW-129 | Clerk production instance configured | DevOps | 1 |
 | CW-130 | Mux production account + webhook configured | DevOps | 1 |
