@@ -17,6 +17,13 @@ export function createRateLimiter(
   })
 }
 
+// Recommended rate limits for production:
+// - Engagement: 60 req/min per user
+// - Entry submission: 5 req/hour per user
+// - Auth endpoints: handled by Clerk
+export const engagementLimiter = createRateLimiter(60, '1 m')
+export const submissionLimiter = createRateLimiter(5, '1 h')
+
 /**
  * Check rate limit — returns { success, remaining }
  * When Redis is null, always returns { success: true, remaining: 999 }
