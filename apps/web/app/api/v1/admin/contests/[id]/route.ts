@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
 import { canTransition } from '@/lib/contest'
 import type { ContestStatus } from '@/lib/contest'
+import { snapshotLeaderboard } from '@/lib/leaderboard'
 
 const patchContestSchema = z.object({
   status: z
@@ -78,6 +79,16 @@ export async function PATCH(
         console.log(
           `[NOTIFY] Contest "${existing.title}" (${existing.id}) is now ACTIVE — send notification emails`
         )
+      }
+
+      // Snapshot leaderboard when transitioning to completed
+      if (to === 'completed') {
+        try {
+          await snapshotLeaderboard(params.id, db)
+        } catch (snapshotErr) {
+          console.error('[snapshotLeaderboard]', snapshotErr)
+          // Non-fatal — proceed with status update
+        }
       }
     }
 
