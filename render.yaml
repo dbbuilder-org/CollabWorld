@@ -69,13 +69,13 @@ services:
 
 databases:
   - name: collabworld-db
-    plan: standard
+    plan: basic-256mb
     region: oregon
     databaseName: collabworld
     user: collabworld
 
   - name: collabworld-db-staging
-    plan: starter
+    plan: basic-256mb
     region: oregon
     databaseName: collabworld_staging
     user: collabworld_staging
