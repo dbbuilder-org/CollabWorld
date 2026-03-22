@@ -1,0 +1,35 @@
+{
+  "name": "collabworld",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "start": "turbo start",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "test:unit": "turbo test:unit",
+    "test:e2e": "turbo test:e2e",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "db:generate": "pnpm --filter @collabworld/db generate",
+    "db:migrate": "pnpm --filter @collabworld/db migrate:dev",
+    "db:migrate:create": "pnpm --filter @collabworld/db migrate:create",
+    "db:migrate:deploy": "pnpm --filter @collabworld/db migrate:deploy",
+    "db:seed": "pnpm --filter @collabworld/db seed",
+    "db:reset": "pnpm --filter @collabworld/db reset",
+    "db:studio": "pnpm --filter @collabworld/db studio"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@prisma/client", "esbuild", "prisma"]
+  }
+}

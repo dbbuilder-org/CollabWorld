@@ -1,0 +1,369 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+enum AccountType {
+  fan
+  creator
+  influencer
+  brand
+  admin
+}
+
+enum ContestStatus {
+  draft
+  upcoming
+  active
+  voting
+  completed
+  archived
+}
+
+enum EntryStatus {
+  pending
+  approved
+  rejected
+  winner
+}
+
+enum EngagementType {
+  like
+  vote
+  comment
+  share
+}
+
+enum AssignmentStatus {
+  invited
+  agreement_pending
+  active
+  completed
+  dropped
+}
+
+enum PackageType {
+  influencer_promo_boost
+  brand_integrated_music_video
+  film_trailer_amplification
+  affiliate_performance_campaign
+  product_placement_package
+}
+
+enum PackageStatus {
+  proposed
+  negotiating
+  active
+  completed
+  cancelled
+}
+
+enum ContentType {
+  music
+  film
+  music_video
+  trailer
+}
+
+enum SubscriptionPlan {
+  free
+  premium
+}
+
+enum SubscriptionStatus {
+  active
+  past_due
+  cancelled
+  trialing
+}
+
+enum RevenueType {
+  ad_revenue
+  subscription_share
+  brand_campaign
+  affiliate_commission
+  contest_prize
+  product_placement
+}
+
+enum StripeAccountStatus {
+  pending
+  active
+  restricted
+}
+
+// ─── Core User Tables ────────────────────────────────────────────────────────
+
+model User {
+  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clerkId       String      @unique @map("clerk_id")
+  email         String      @unique
+  displayName   String      @map("display_name")
+  avatarUrl     String?     @map("avatar_url")
+  accountType   AccountType @map("account_type")
+  bio           String?
+  socialLinks   Json        @default("{}") @map("social_links")
+  isVerified    Boolean     @default(false) @map("is_verified")
+  isActive      Boolean     @default(true) @map("is_active")
+  referredById  String?     @map("referred_by") @db.Uuid
+  referralCode  String?     @unique @map("referral_code")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+
+  referredBy    User?       @relation("Referrals", fields: [referredById], references: [id])
+  referrals     User[]      @relation("Referrals")
+
+  creatorProfile    CreatorProfile?
+  influencerProfile InfluencerProfile?
+  brandProfile      BrandProfile?
+
+  contestsSponsored Contest[]   @relation("BrandSponsor")
+  contestsCreated   Contest[]   @relation("ContestCreator")
+  entries           ContestEntry[]
+  engagements       EntryEngagement[]
+  influencerAssignments InfluencerContestAssignment[]
+  notifications     Notification[]
+  auditActions      AuditLog[]   @relation("AuditActor")
+
+  @@index([accountType])
+  @@index([referralCode])
+  @@map("users")
+}
+
+model CreatorProfile {
+  id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId              String              @unique @map("user_id") @db.Uuid
+  genre               String[]
+  portfolioUrl        String?             @map("portfolio_url")
+  imdbUrl             String?             @map("imdb_url")
+  spotifyUrl          String?             @map("spotify_url")
+  totalEarnings       Decimal             @default(0) @map("total_earnings") @db.Decimal(12, 2)
+  stripeAccountId     String?             @map("stripe_account_id")
+  stripeAccountStatus StripeAccountStatus? @map("stripe_account_status")
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("creator_profiles")
+}
+
+model InfluencerProfile {
+  id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId              String              @unique @map("user_id") @db.Uuid
+  platformHandles     Json                @default("{}") @map("platform_handles")
+  totalFollowers      Int                 @default(0) @map("total_followers")
+  engagementRate      Decimal             @default(0) @map("engagement_rate") @db.Decimal(5, 2)
+  agreementSignedAt   DateTime?           @map("agreement_signed_at")
+  agreementVersion    String?             @map("agreement_version")
+  stripeAccountId     String?             @map("stripe_account_id")
+  totalEarnings       Decimal             @default(0) @map("total_earnings") @db.Decimal(12, 2)
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("influencer_profiles")
+}
+
+model BrandProfile {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String   @unique @map("user_id") @db.Uuid
+  companyName     String   @map("company_name")
+  website         String?
+  contactName     String?  @map("contact_name")
+  contactPhone    String?  @map("contact_phone")
+  industry        String?
+  stripeCustomerId String? @map("stripe_customer_id")
+  totalSpent      Decimal  @default(0) @map("total_spent") @db.Decimal(12, 2)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("brand_profiles")
+}
+
+// ─── Contest Tables ──────────────────────────────────────────────────────────
+
+model Contest {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title           String
+  slug            String        @unique
+  description     String?
+  rules           String?
+  status          ContestStatus @default(draft)
+  brandSponsorId  String?       @map("brand_sponsor_id") @db.Uuid
+  prizePoolTotal  Decimal       @default(0) @map("prize_pool_total") @db.Decimal(12, 2)
+  entryDeadline   DateTime      @map("entry_deadline")
+  votingStart     DateTime      @map("voting_start")
+  votingEnd       DateTime      @map("voting_end")
+  contestEnd      DateTime      @map("contest_end")
+  assetPackageUrl String?       @map("asset_package_url")
+  maxEntries      Int?          @map("max_entries")
+  thumbnailUrl    String?       @map("thumbnail_url")
+  createdById     String        @map("created_by") @db.Uuid
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  brandSponsor  User?  @relation("BrandSponsor", fields: [brandSponsorId], references: [id])
+  createdBy     User   @relation("ContestCreator", fields: [createdById], references: [id])
+
+  prizes        ContestPrize[]
+  entries       ContestEntry[]
+  influencerAssignments InfluencerContestAssignment[]
+  leaderboardSnapshots  LeaderboardSnapshot[]
+
+  @@index([status])
+  @@index([brandSponsorId])
+  @@map("contests")
+}
+
+model ContestPrize {
+  id            String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  contestId     String  @map("contest_id") @db.Uuid
+  rank          Int
+  prizeAmount   Decimal @map("prize_amount") @db.Decimal(12, 2)
+  description   String?
+  winnerEntryId String? @map("winner_entry_id") @db.Uuid
+
+  contest     Contest       @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  winnerEntry ContestEntry? @relation(fields: [winnerEntryId], references: [id])
+
+  @@unique([contestId, rank])
+  @@map("contest_prizes")
+}
+
+model ContestEntry {
+  id              String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  contestId       String      @map("contest_id") @db.Uuid
+  creatorId       String      @map("creator_id") @db.Uuid
+  title           String
+  description     String?
+  muxUploadId     String?     @map("mux_upload_id")
+  muxAssetId      String?     @map("mux_asset_id")
+  muxPlaybackId   String?     @map("mux_playback_id")
+  thumbnailUrl    String?     @map("thumbnail_url")
+  durationSeconds Int?        @map("duration_seconds")
+  status          EntryStatus @default(pending)
+  rejectionReason String?     @map("rejection_reason")
+  voteCount       Int         @default(0) @map("vote_count")
+  likeCount       Int         @default(0) @map("like_count")
+  commentCount    Int         @default(0) @map("comment_count")
+  shareCount      Int         @default(0) @map("share_count")
+  compositeScore  Decimal     @default(0) @map("composite_score") @db.Decimal(10, 2)
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  contest     Contest  @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  creator     User     @relation(fields: [creatorId], references: [id])
+  engagements EntryEngagement[]
+  prizes      ContestPrize[]
+  snapshots   LeaderboardSnapshot[]
+
+  @@unique([contestId, creatorId])
+  @@index([contestId, status])
+  @@index([contestId, compositeScore(sort: Desc)])
+  @@map("contest_entries")
+}
+
+model EntryEngagement {
+  id        String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  entryId   String         @map("entry_id") @db.Uuid
+  userId    String         @map("user_id") @db.Uuid
+  type      EngagementType
+  content   String?
+  ipAddress String?        @map("ip_address")
+  createdAt DateTime       @default(now()) @map("created_at")
+
+  entry ContestEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  user  User         @relation(fields: [userId], references: [id])
+
+  @@index([entryId, type])
+  @@index([userId, type])
+  @@index([createdAt])
+  @@map("entry_engagements")
+}
+
+model InfluencerContestAssignment {
+  id                  String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  contestId           String           @map("contest_id") @db.Uuid
+  influencerId        String           @map("influencer_id") @db.Uuid
+  status              AssignmentStatus @default(invited)
+  dailyPostsRequired  Int              @default(1) @map("daily_posts_required")
+  commissionRate      Decimal          @map("commission_rate") @db.Decimal(5, 2)
+  trackingUrl         String           @unique @map("tracking_url")
+  conversions         Int              @default(0)
+  totalEarned         Decimal          @default(0) @map("total_earned") @db.Decimal(12, 2)
+  agreementSignedAt   DateTime?        @map("agreement_signed_at")
+  joinedAt            DateTime         @default(now()) @map("joined_at")
+  updatedAt           DateTime         @updatedAt @map("updated_at")
+
+  contest    Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  influencer User    @relation(fields: [influencerId], references: [id])
+
+  @@unique([contestId, influencerId])
+  @@index([contestId, status])
+  @@index([influencerId])
+  @@map("influencer_contest_assignments")
+}
+
+model LeaderboardSnapshot {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  contestId      String   @map("contest_id") @db.Uuid
+  entryId        String   @map("entry_id") @db.Uuid
+  rank           Int
+  compositeScore Decimal  @map("composite_score") @db.Decimal(10, 2)
+  snapshotAt     DateTime @map("snapshot_at")
+
+  contest Contest      @relation(fields: [contestId], references: [id])
+  entry   ContestEntry @relation(fields: [entryId], references: [id])
+
+  @@index([contestId, snapshotAt])
+  @@index([entryId])
+  @@map("leaderboard_snapshots")
+}
+
+// ─── Shared Tables ───────────────────────────────────────────────────────────
+
+model Notification {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  type      String
+  title     String
+  body      String?
+  actionUrl String?   @map("action_url")
+  metadata  Json      @default("{}")
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  actorId      String?  @map("actor_id") @db.Uuid
+  action       String
+  resourceType String   @map("resource_type")
+  resourceId   String   @map("resource_id") @db.Uuid
+  metadata     Json     @default("{}")
+  ipAddress    String?  @map("ip_address")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  actor User? @relation("AuditActor", fields: [actorId], references: [id])
+
+  @@index([actorId])
+  @@index([resourceType, resourceId])
+  @@index([createdAt])
+  @@map("audit_log")
+}
