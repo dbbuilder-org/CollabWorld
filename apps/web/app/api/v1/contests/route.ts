@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
+import { z } from 'zod'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
+import { generateSlug } from '@/lib/contest'
 
 const PUBLIC_STATUSES = ['upcoming', 'active', 'voting'] as const
 
@@ -73,6 +75,98 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ data: result }, { status: 200 })
   } catch (err) {
     console.error('[GET /api/v1/contests]', err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
+const createContestSchema = z.object({
+  title: z.string().min(3).max(100),
+  description: z.string().optional(),
+  entryDeadline: z.string().datetime(),
+  votingStart: z.string().datetime(),
+  votingEnd: z.string().datetime(),
+  contestEnd: z.string().datetime(),
+  maxEntries: z.number().int().positive().optional(),
+  prizes: z
+    .array(
+      z.object({
+        rank: z.number().int().positive(),
+        description: z.string().optional(),
+        value: z.number().min(0),
+      })
+    )
+    .optional(),
+})
+
+export async function POST(req: NextRequest): Promise<NextResponse> {
+  const { userId, sessionClaims } = auth()
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const role = getRoleFromMetadata(sessionClaims?.['publicMetadata'])
+  if (!isAdmin(role)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+  let body: unknown
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+  }
+
+  const parsed = createContestSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'Validation failed', details: parsed.error.flatten() },
+      { status: 400 }
+    )
+  }
+
+  const { title, description, entryDeadline, votingStart, votingEnd, contestEnd, maxEntries, prizes } =
+    parsed.data
+
+  try {
+    const adminUser = await db.user.findUnique({
+      where: { clerkId: userId },
+      select: { id: true },
+    })
+    if (!adminUser) return NextResponse.json({ error: 'Admin user not found' }, { status: 404 })
+
+    // Generate unique slug
+    let slug = generateSlug(title)
+    const existing = await db.contest.findUnique({ where: { slug } })
+    if (existing) {
+      slug = `${slug}-${Date.now()}`
+    }
+
+    const prizeTotal = prizes?.reduce((sum, p) => sum + p.value, 0) ?? 0
+
+    const contest = await db.contest.create({
+      data: {
+        title,
+        slug,
+        description: description ?? null,
+        status: 'draft',
+        createdById: adminUser.id,
+        entryDeadline: new Date(entryDeadline),
+        votingStart: new Date(votingStart),
+        votingEnd: new Date(votingEnd),
+        contestEnd: new Date(contestEnd),
+        maxEntries: maxEntries ?? null,
+        prizePoolTotal: prizeTotal,
+        prizes: prizes && prizes.length > 0
+          ? {
+              create: prizes.map((p) => ({
+                rank: p.rank,
+                prizeAmount: p.value,
+                description: p.description ?? null,
+              })),
+            }
+          : undefined,
+      },
+      include: { prizes: true },
+    })
+
+    return NextResponse.json({ data: contest }, { status: 201 })
+  } catch (err) {
+    console.error('[POST /api/v1/contests]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
