@@ -6,7 +6,7 @@ services:
     region: oregon
     branch: main
     rootDir: .
-    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @collabworld/db generate && pnpm build
+    buildCommand: NODE_ENV=development pnpm install --frozen-lockfile && pnpm --filter @collabworld/db generate && pnpm build
     startCommand: pnpm --filter @collabworld/web start
     healthCheckPath: /api/health
     numInstances: 1
@@ -52,7 +52,7 @@ services:
     region: oregon
     branch: staging
     rootDir: .
-    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @collabworld/db generate && pnpm build
+    buildCommand: NODE_ENV=development pnpm install --frozen-lockfile && pnpm --filter @collabworld/db generate && pnpm build
     startCommand: pnpm --filter @collabworld/web start
     healthCheckPath: /api/health
     numInstances: 1
