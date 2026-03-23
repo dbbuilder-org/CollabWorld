@@ -50,7 +50,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   try {
     await db.$transaction(
-      entries.map((entry) =>
+      entries.map((entry: (typeof entries)[number]) =>
         db.contestEntry.update({
           where: { id: entry.id },
           data: {
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://collabworld.io'
 
     await Promise.allSettled(
-      entries.map(async (entry) => {
+      entries.map(async (entry: (typeof entries)[number]) => {
         const entryUrl = `${appUrl}/contests/${entry.contest.slug}/entries/${entry.id}`
 
         if (status === 'approved') {

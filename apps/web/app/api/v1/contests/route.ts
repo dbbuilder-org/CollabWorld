@@ -55,7 +55,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     })
 
     const now = new Date()
-    const result = contests.map((c) => {
+    const result = contests.map((c: (typeof contests)[number]) => {
       const daysRemaining = Math.max(
         0,
         Math.ceil((c.contestEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))

@@ -65,7 +65,7 @@ export async function updateEntryScoreWithCounts(
     counts[g.type] = g._count.type
   }
 
-  const score = computeContestScore(counts.vote, counts.like, counts.comment, counts.share)
+  const score = computeContestScore(counts.vote ?? 0, counts.like ?? 0, counts.comment ?? 0, counts.share ?? 0)
 
   const updated = await db.contestEntry.update({
     where: { id: entryId },
@@ -116,7 +116,7 @@ export async function getContestLeaderboard(
     },
   })
 
-  return entries.map((entry, idx) => ({
+  return entries.map((entry: (typeof entries)[number], idx: number) => ({
     rank: idx + 1,
     entryId: entry.id,
     title: entry.title,
@@ -146,7 +146,7 @@ export async function snapshotLeaderboard(contestId: string, db: PrismaClient): 
 
   const snapshotAt = new Date()
   await db.leaderboardSnapshot.createMany({
-    data: entries.map((entry, idx) => ({
+    data: entries.map((entry: (typeof entries)[number], idx: number) => ({
       contestId,
       entryId: entry.id,
       rank: idx + 1,

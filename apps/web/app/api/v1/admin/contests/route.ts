@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
-import { db } from '@collabworld/db'
+import { db, Prisma } from '@collabworld/db'
 import { z } from 'zod'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
 import { generateSlug } from '@/lib/contest'
@@ -107,7 +107,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Compute prize pool total
     const prizePoolTotal = data.prizes.reduce((sum, p) => sum + p.prizeAmount, 0)
 
-    const contest = await db.$transaction(async (tx) => {
+    const contest = await db.$transaction(async (tx: Prisma.TransactionClient) => {
       const created = await tx.contest.create({
         data: {
           title: data.title,

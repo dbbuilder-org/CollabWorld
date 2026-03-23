@@ -76,7 +76,7 @@ export async function PATCH(
 
     if (to === 'voting') {
       const creatorEmails = existing.entries
-        .map((e) => e.creator.email)
+        .map((e: (typeof existing.entries)[number]) => e.creator.email)
         .filter(Boolean)
 
       if (creatorEmails.length > 0) {

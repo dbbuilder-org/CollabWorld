@@ -1,7 +1,7 @@
 import Stripe from 'stripe'
 
 export const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-11-20.acacia' })
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2025-02-24.acacia' })
   : null
 
 export const PREMIUM_PRICE_ID = process.env.STRIPE_PREMIUM_PRICE_ID || ''
@@ -32,7 +32,7 @@ export async function createCheckoutSession(opts: {
 
 export async function createPortalSession(customerId: string, returnUrl: string): Promise<string | null> {
   if (!stripe) return null
-  const session = await stripe.billing_portal.sessions.create({
+  const session = await stripe.billingPortal.sessions.create({
     customer: customerId,
     return_url: returnUrl,
   })

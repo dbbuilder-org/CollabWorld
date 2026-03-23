@@ -12,7 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
     { url: `${baseUrl}/contests`, lastModified: new Date(), changeFrequency: 'hourly', priority: 0.9 },
-    ...contests.map(c => ({
+    ...contests.map((c: (typeof contests)[number]) => ({
       url: `${baseUrl}/contests/${c.slug}`,
       lastModified: c.updatedAt,
       changeFrequency: 'hourly' as const,

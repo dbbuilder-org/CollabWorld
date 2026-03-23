@@ -90,7 +90,7 @@ export default async function AdminContestsPage({ searchParams }: PageProps) {
             </tr>
           </thead>
           <tbody>
-            {contests.map((c) => (
+            {contests.map((c: (typeof contests)[number]) => (
               <tr key={c.id} className="border-b border-zinc-800 last:border-0 hover:bg-zinc-800/50">
                 <td className="px-4 py-3">
                   <p className="text-white font-medium">{c.title}</p>

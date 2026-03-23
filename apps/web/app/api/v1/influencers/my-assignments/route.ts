@@ -49,7 +49,7 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://collabworld.io'
 
-    const enriched = assignments.map((a) => ({
+    const enriched = assignments.map((a: (typeof assignments)[number]) => ({
       ...a,
       referralLink: createReferralLink(a.trackingUrl, baseUrl),
       estimatedEarnings: a.totalEarned,

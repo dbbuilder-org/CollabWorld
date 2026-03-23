@@ -56,10 +56,10 @@ export default async function InfluencerDashboardPage() {
   })
 
   const totalEarnings = assignments.reduce(
-    (sum, a) => sum + Number(a.totalEarned),
+    (sum: number, a: (typeof assignments)[number]) => sum + Number(a.totalEarned),
     0
   )
-  const totalConversions = assignments.reduce((sum, a) => sum + a.conversions, 0)
+  const totalConversions = assignments.reduce((sum: number, a: (typeof assignments)[number]) => sum + a.conversions, 0)
 
   return (
     <div className="space-y-8">
@@ -96,7 +96,7 @@ export default async function InfluencerDashboardPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {assignments.map((assignment) => {
+            {assignments.map((assignment: (typeof assignments)[number]) => {
               const referralLink = createReferralLink(assignment.trackingUrl, BASE_URL)
               const isSigned = assignment.status === 'active' || assignment.status === 'completed'
               return (

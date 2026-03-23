@@ -38,7 +38,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       orderBy: { createdAt: 'asc' },
     })
 
-    const registrationsByDay = groupByDay(registrationsRaw.map((r) => r.createdAt))
+    const registrationsByDay = groupByDay(registrationsRaw.map((r: (typeof registrationsRaw)[number]) => r.createdAt))
 
     // Entries over time
     const entriesRaw = await db.contestEntry.findMany({
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       orderBy: { createdAt: 'asc' },
     })
 
-    const entriesByDay = groupByDay(entriesRaw.map((e) => e.createdAt))
+    const entriesByDay = groupByDay(entriesRaw.map((e: (typeof entriesRaw)[number]) => e.createdAt))
 
     // Engagement by type
     const engagementsByType = await db.entryEngagement.groupBy({
@@ -77,15 +77,15 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     })
 
     const topContestsSummary = topContests
-      .map((c) => ({
+      .map((c: (typeof topContests)[number]) => ({
         id: c.id,
         title: c.title,
         slug: c.slug,
         status: c.status,
         entryCount: c._count.entries,
-        totalEngagements: c.entries.reduce((sum, e) => sum + e._count.engagements, 0),
+        totalEngagements: c.entries.reduce((sum: number, e: (typeof c.entries)[number]) => sum + e._count.engagements, 0),
       }))
-      .sort((a, b) => b.totalEngagements - a.totalEngagements)
+      .sort((a: { totalEngagements: number }, b: { totalEngagements: number }) => b.totalEngagements - a.totalEngagements)
       .slice(0, 10)
 
     // Top creators by composite score
@@ -98,15 +98,15 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       take: 10,
     })
 
-    const creatorIds = topCreators.map((c) => c.creatorId)
+    const creatorIds = topCreators.map((c: (typeof topCreators)[number]) => c.creatorId)
     const creators = await db.user.findMany({
       where: { id: { in: creatorIds } },
       select: { id: true, displayName: true, email: true },
     })
 
-    const creatorMap = new Map(creators.map((c) => [c.id, c]))
-    const topCreatorsSummary = topCreators.map((tc) => ({
-      ...creatorMap.get(tc.creatorId),
+    const creatorMap = new Map(creators.map((c: (typeof creators)[number]) => [c.id, c]))
+    const topCreatorsSummary = topCreators.map((tc: (typeof topCreators)[number]) => ({
+      ...(creatorMap.get(tc.creatorId) ?? {}),
       totalScore: Number(tc._sum.compositeScore ?? 0),
       entryCount: tc._count.id,
     }))
@@ -116,7 +116,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         data: {
           registrationsByDay,
           entriesByDay,
-          engagementByType: engagementsByType.map((e) => ({
+          engagementByType: engagementsByType.map((e: (typeof engagementsByType)[number]) => ({
             type: e.type,
             count: e._count.type,
           })),

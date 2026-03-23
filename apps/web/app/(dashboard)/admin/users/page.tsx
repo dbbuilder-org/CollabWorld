@@ -101,7 +101,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
             </tr>
           </thead>
           <tbody>
-            {users.map((u) => (
+            {users.map((u: (typeof users)[number]) => (
               <tr key={u.id} className="border-b border-zinc-800 last:border-0 hover:bg-zinc-800/50">
                 <td className="px-4 py-3">
                   <p className="text-white font-medium">{u.displayName}</p>

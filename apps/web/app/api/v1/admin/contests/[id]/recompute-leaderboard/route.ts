@@ -35,7 +35,7 @@ export async function POST(req: NextRequest, { params }: RouteContext): Promise<
     })
 
     const results = await Promise.allSettled(
-      entries.map((entry) => updateEntryScore(entry.id, db, redis))
+      entries.map((entry: (typeof entries)[number]) => updateEntryScore(entry.id, db, redis))
     )
 
     const succeeded = results.filter((r) => r.status === 'fulfilled').length
