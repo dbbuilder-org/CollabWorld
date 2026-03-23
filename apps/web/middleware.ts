@@ -6,8 +6,13 @@ const isPublicRoute = createRouteMatcher([
   '/',
   '/sign-in(.*)',
   '/sign-up(.*)',
+  '/api/health',
   '/api/v1/webhooks(.*)',
   '/ref/(.*)',
+  '/contests(.*)',
+  '/pricing',
+  '/robots.txt',
+  '/sitemap.xml',
 ])
 
 function addSecurityHeaders(response: NextResponse): NextResponse {
