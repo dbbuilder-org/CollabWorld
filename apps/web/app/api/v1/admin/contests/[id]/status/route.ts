@@ -70,7 +70,7 @@ export async function PATCH(
         to: '',  // Would normally be brand sponsor email; skip if missing
         contestTitle: existing.title,
         contestUrl,
-        endsAt: existing.contestEnd.toISOString().split('T')[0],
+        endsAt: existing.contestEnd.toISOString().substring(0, 10),
       }).catch(() => {/* fire-and-forget */})
     }
 
@@ -84,7 +84,7 @@ export async function PATCH(
           to: creatorEmails,
           contestTitle: existing.title,
           votingUrl: `${contestUrl}/vote`,
-          endsAt: existing.votingEnd.toISOString().split('T')[0],
+          endsAt: existing.votingEnd.toISOString().substring(0, 10),
         }).catch(() => {/* fire-and-forget */})
       }
     }

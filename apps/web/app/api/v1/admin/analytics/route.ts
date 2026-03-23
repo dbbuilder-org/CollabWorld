@@ -136,7 +136,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 function groupByDay(dates: Date[]): Array<{ date: string; count: number }> {
   const map = new Map<string, number>()
   for (const d of dates) {
-    const key = d.toISOString().split('T')[0]
+    const key = d.toISOString().split('T')[0] ?? d.toISOString().substring(0, 10)
     map.set(key, (map.get(key) ?? 0) + 1)
   }
   return Array.from(map.entries())
