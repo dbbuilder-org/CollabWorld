@@ -5,7 +5,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://collabworld.servicevision.io'
 
   const contests = await db.contest.findMany({
-    where: { status: { in: ['ACTIVE', 'VOTING', 'UPCOMING'] } },
+    where: { status: { in: ['active', 'voting', 'upcoming'] } },
     select: { slug: true, updatedAt: true },
   })
 
