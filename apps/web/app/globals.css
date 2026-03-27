@@ -1,3 +1,68 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ─── Brand font variables ─── */
+:root {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Playfair Display', ui-serif, Georgia, serif;
+
+  /* ─── shadcn/ui-compatible token set (neutral base, dark-first) ─── */
+  --background: 0 0% 0%;          /* black */
+  --foreground: 0 0% 98%;         /* near-white */
+  --card: 0 0% 9%;                /* zinc-900 */
+  --card-foreground: 0 0% 98%;
+  --popover: 0 0% 9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;            /* white buttons */
+  --primary-foreground: 0 0% 0%;
+  --secondary: 0 0% 15%;          /* zinc-800 */
+  --secondary-foreground: 0 0% 98%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 64%;   /* zinc-400 */
+  --accent: 0 0% 15%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 18%;             /* zinc-800 */
+  --input: 0 0% 18%;
+  --ring: 0 0% 80%;
+  --radius: 0.75rem;
+
+  /* ─── Collab World brand accents ─── */
+  --brand-yellow: 48 100% 50%;    /* yellow-400 */
+  --brand-yellow-glow: rgba(250, 204, 21, 0.35);
+  --brand-white-glow: rgba(255, 255, 255, 0.25);
+}
+
+/* ─── Base styles ─── */
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Brand marquee animation ─── */
+@keyframes marquee {
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+/* ─── Glow utilities ─── */
+.glow-white {
+  box-shadow: 0 0 30px var(--brand-white-glow);
+}
+
+.glow-yellow {
+  box-shadow: 0 0 30px var(--brand-yellow-glow);
+}

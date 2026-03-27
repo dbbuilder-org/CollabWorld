@@ -1,4 +1,5 @@
 import Navbar from '@/components/layout/Navbar'
+import BottomNav from '@/components/layout/BottomNav'
 
 export default function DashboardLayout({
   children,
@@ -8,9 +9,9 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-black text-white">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8 pb-24 md:pb-8">
         <div className="flex gap-8">
-          {/* Sidebar */}
+          {/* Sidebar — desktop only */}
           <aside className="hidden lg:block w-56 shrink-0">
             <nav className="space-y-1">
               {[
@@ -34,6 +35,7 @@ export default function DashboardLayout({
           <main className="flex-1 min-w-0">{children}</main>
         </div>
       </div>
+      <BottomNav />
     </div>
   )
 }
