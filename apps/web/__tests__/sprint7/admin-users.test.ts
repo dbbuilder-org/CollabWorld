@@ -53,11 +53,11 @@ describe('GET /api/v1/admin/users', () => {
     vi.mocked(auth).mockReturnValue({
       userId: 'user_admin_123',
       sessionClaims: { publicMetadata: { role: 'admin' } },
-    } as ReturnType<typeof auth>)
+    } as unknown as ReturnType<typeof auth>)
   })
 
   it('returns 401 when not authenticated', async () => {
-    vi.mocked(auth).mockReturnValue({ userId: null, sessionClaims: null } as ReturnType<typeof auth>)
+    vi.mocked(auth).mockReturnValue({ userId: null, sessionClaims: null } as unknown as ReturnType<typeof auth>)
     const GET = await getListHandler()
     const req = new NextRequest(BASE_USERS_URL)
     const res = await GET(req)
@@ -68,7 +68,7 @@ describe('GET /api/v1/admin/users', () => {
     vi.mocked(auth).mockReturnValue({
       userId: 'user_fan_123',
       sessionClaims: { publicMetadata: { role: 'fan' } },
-    } as ReturnType<typeof auth>)
+    } as unknown as ReturnType<typeof auth>)
     const GET = await getListHandler()
     const req = new NextRequest(BASE_USERS_URL)
     const res = await GET(req)
@@ -150,11 +150,11 @@ describe('GET /api/v1/admin/users/[id]', () => {
     vi.mocked(auth).mockReturnValue({
       userId: 'user_admin_123',
       sessionClaims: { publicMetadata: { role: 'admin' } },
-    } as ReturnType<typeof auth>)
+    } as unknown as ReturnType<typeof auth>)
   })
 
   it('returns 401 when unauthenticated', async () => {
-    vi.mocked(auth).mockReturnValue({ userId: null, sessionClaims: null } as ReturnType<typeof auth>)
+    vi.mocked(auth).mockReturnValue({ userId: null, sessionClaims: null } as unknown as ReturnType<typeof auth>)
     const { GET } = await getDetailHandlers()
     const req = new NextRequest(BASE_USER_ID_URL)
     const res = await GET(req, { params: { id: 'uuid-user-001' } })
@@ -165,7 +165,7 @@ describe('GET /api/v1/admin/users/[id]', () => {
     vi.mocked(auth).mockReturnValue({
       userId: 'user_fan',
       sessionClaims: { publicMetadata: { role: 'fan' } },
-    } as ReturnType<typeof auth>)
+    } as unknown as ReturnType<typeof auth>)
     const { GET } = await getDetailHandlers()
     const req = new NextRequest(BASE_USER_ID_URL)
     const res = await GET(req, { params: { id: 'uuid-user-001' } })
@@ -197,11 +197,11 @@ describe('PATCH /api/v1/admin/users/[id]', () => {
     vi.mocked(auth).mockReturnValue({
       userId: 'user_admin_123',
       sessionClaims: { publicMetadata: { role: 'admin' } },
-    } as ReturnType<typeof auth>)
+    } as unknown as ReturnType<typeof auth>)
   })
 
   it('returns 401 when unauthenticated', async () => {
-    vi.mocked(auth).mockReturnValue({ userId: null, sessionClaims: null } as ReturnType<typeof auth>)
+    vi.mocked(auth).mockReturnValue({ userId: null, sessionClaims: null } as unknown as ReturnType<typeof auth>)
     const { PATCH } = await getDetailHandlers()
     const req = new NextRequest(BASE_USER_ID_URL, {
       method: 'PATCH',

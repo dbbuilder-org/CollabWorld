@@ -1,6 +1,8 @@
+> **Superseded by:** [ROADMAP-2026-03-29.md](ROADMAP-2026-03-29.md) — Updated 2026-03-29. All 133 CW tickets complete.
+
 # Collab World — Development Roadmap
 
-**Version:** 1.0 | **Date:** 2026-03-22 | **Status:** Active
+**Version:** 1.0 | **Date:** 2026-03-22 | **Status:** Superseded
 
 ---
 

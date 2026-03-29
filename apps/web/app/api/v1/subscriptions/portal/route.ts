@@ -11,12 +11,10 @@ export async function POST(req: Request) {
 
   const user = await db.user.findUnique({
     where: { clerkId: userId },
-    select: {
-      brandProfile: { select: { stripeCustomerId: true } },
-    },
+    select: { stripeCustomerId: true },
   })
 
-  const stripeCustomerId = user?.brandProfile?.stripeCustomerId ?? null
+  const stripeCustomerId = user?.stripeCustomerId ?? null
 
   if (!stripeCustomerId) {
     return NextResponse.json({ error: 'No Stripe customer found' }, { status: 400 })

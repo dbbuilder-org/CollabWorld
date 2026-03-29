@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { NextRequest } from 'next/server'
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 const mockVerify = vi.fn()
@@ -25,14 +26,14 @@ async function getHandler() {
   return mod.POST
 }
 
-function makeRequest(body: string, includeSvixHeaders = true): Request {
+function makeRequest(body: string, includeSvixHeaders = true): NextRequest {
   const hdrs: Record<string, string> = { 'content-type': 'application/json' }
   if (includeSvixHeaders) {
     hdrs['svix-id'] = 'msg_123'
     hdrs['svix-timestamp'] = '1234567890'
     hdrs['svix-signature'] = 'v1,sig_abc'
   }
-  return new Request('https://example.com/api/v1/webhooks/clerk', {
+  return new NextRequest('https://example.com/api/v1/webhooks/clerk', {
     method: 'POST',
     headers: hdrs,
     body,

@@ -92,7 +92,7 @@ describe('POST /api/v1/referrals/convert', () => {
     })
     const res = await POST(req)
     expect(res.status).toBe(200)
-    expect(json => json.success).toBeTruthy()
+    expect((json: { success: boolean }) => json.success).toBeTruthy()
   })
 
   it('returns 500 when trackConversion throws', async () => {

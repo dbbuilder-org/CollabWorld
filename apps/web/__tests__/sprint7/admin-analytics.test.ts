@@ -71,7 +71,7 @@ describe('GET /api/v1/admin/analytics', () => {
     vi.mocked(auth).mockReturnValue({
       userId: 'user_admin_123',
       sessionClaims: { publicMetadata: { role: 'admin' } },
-    } as ReturnType<typeof auth>)
+    } as unknown as ReturnType<typeof auth>)
     vi.mocked(db.user.findMany).mockResolvedValue(mockUsers as never)
     vi.mocked(db.contestEntry.findMany).mockResolvedValue(mockEntries as never)
     vi.mocked(db.entryEngagement.groupBy).mockResolvedValue(mockEngagements as never)
@@ -83,7 +83,7 @@ describe('GET /api/v1/admin/analytics', () => {
   })
 
   it('returns 401 when unauthenticated', async () => {
-    vi.mocked(auth).mockReturnValue({ userId: null, sessionClaims: null } as ReturnType<typeof auth>)
+    vi.mocked(auth).mockReturnValue({ userId: null, sessionClaims: null } as unknown as ReturnType<typeof auth>)
     const GET = await getHandler()
     const req = new NextRequest(BASE_URL)
     const res = await GET(req)
@@ -94,7 +94,7 @@ describe('GET /api/v1/admin/analytics', () => {
     vi.mocked(auth).mockReturnValue({
       userId: 'user_fan',
       sessionClaims: { publicMetadata: { role: 'creator' } },
-    } as ReturnType<typeof auth>)
+    } as unknown as ReturnType<typeof auth>)
     const GET = await getHandler()
     const req = new NextRequest(BASE_URL)
     const res = await GET(req)

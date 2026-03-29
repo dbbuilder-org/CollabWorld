@@ -173,7 +173,7 @@ describe('Entry flow integration', () => {
 
     // Verify entry exists in store with muxUploadId
     expect(entryStore[entryId]).toBeDefined()
-    expect(entryStore[entryId].muxUploadId).toBe('mux-upload-int')
+    expect(entryStore[entryId]!.muxUploadId).toBe('mux-upload-int')
 
     // ── Step 2: Mux webhook — asset created ──────────────────────────────────
     const assetCreatedBody = JSON.stringify({
@@ -192,7 +192,7 @@ describe('Entry flow integration', () => {
 
     const assetCreatedRes = await muxWebhookPOST(assetCreatedReq)
     expect(assetCreatedRes.status).toBe(200)
-    expect(entryStore[entryId].muxAssetId).toBe('mux-asset-int')
+    expect(entryStore[entryId]!.muxAssetId).toBe('mux-asset-int')
 
     // ── Step 3: Mux webhook — asset ready ────────────────────────────────────
     const assetReadyBody = JSON.stringify({
@@ -215,11 +215,11 @@ describe('Entry flow integration', () => {
 
     const assetReadyRes = await muxWebhookPOST(assetReadyReq)
     expect(assetReadyRes.status).toBe(200)
-    expect(entryStore[entryId].muxPlaybackId).toBe('playback-int-001')
-    expect(entryStore[entryId].thumbnailUrl).toBe(
+    expect(entryStore[entryId]!.muxPlaybackId).toBe('playback-int-001')
+    expect(entryStore[entryId]!.thumbnailUrl).toBe(
       'https://image.mux.com/playback-int-001/thumbnail.jpg'
     )
-    expect(entryStore[entryId].durationSeconds).toBe(96)
+    expect(entryStore[entryId]!.durationSeconds).toBe(96)
 
     // ── Step 4: Admin approves ────────────────────────────────────────────────
     ;(auth as ReturnType<typeof vi.fn>).mockReturnValue({
@@ -250,8 +250,8 @@ describe('Entry flow integration', () => {
 
     // Notification created for creator
     expect(notificationStore).toHaveLength(1)
-    expect(notificationStore[0].userId).toBe('creator-int-001')
-    expect(notificationStore[0].title).toBe('Your entry has been approved!')
+    expect(notificationStore[0]!.userId).toBe('creator-int-001')
+    expect(notificationStore[0]!.title).toBe('Your entry has been approved!')
   })
 
   it('verifies invalid mux webhook signatures are rejected', async () => {

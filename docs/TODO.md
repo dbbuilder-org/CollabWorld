@@ -1,3 +1,5 @@
+> **Superseded by:** [ROADMAP-2026-03-29.md](ROADMAP-2026-03-29.md) — Updated 2026-03-29. All Phase 0 items complete.
+
 # Collab World — Sprint 1 TODO
 
 **Sprint:** Phase 0 Foundation | **Date:** 2026-03-22 | **Owner:** Development Team

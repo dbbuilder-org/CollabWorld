@@ -61,9 +61,8 @@ export async function POST(req: Request) {
         },
       })
     }
-  } catch (err) {
-    console.error('[stripe webhook] DB update failed:', err)
-    // Still return 200 to prevent Stripe retrying non-DB errors
+  } catch {
+    // Still return 200 to prevent Stripe from retrying non-DB errors
   }
 
   return NextResponse.json({ received: true })

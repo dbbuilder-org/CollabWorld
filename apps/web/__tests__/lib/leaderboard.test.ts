@@ -162,10 +162,10 @@ describe('getContestLeaderboard', () => {
 
     const result = await getContestLeaderboard(CONTEST_ID, mockDb as any, null)
     expect(result).toHaveLength(1)
-    expect(result[0].rank).toBe(1)
-    expect(result[0].entryId).toBe(ENTRY_ID)
-    expect(result[0].compositeScore).toBe(58.5)
-    expect(result[0].creatorName).toBe('Creator One')
+    expect(result[0]!.rank).toBe(1)
+    expect(result[0]!.entryId).toBe(ENTRY_ID)
+    expect(result[0]!.compositeScore).toBe(58.5)
+    expect(result[0]!.creatorName).toBe('Creator One')
   })
 
   it('returns empty array for contest with no entries', async () => {
@@ -198,12 +198,12 @@ describe('snapshotLeaderboard', () => {
     await snapshotLeaderboard(CONTEST_ID, mockDbWithSnapshot as any)
 
     expect(createManyMock).toHaveBeenCalledOnce()
-    const call = createManyMock.mock.calls[0][0]
+    const call = createManyMock.mock.calls[0]![0]
     expect(call.data).toHaveLength(3)
-    expect(call.data[0].rank).toBe(1)
-    expect(call.data[1].rank).toBe(2)
-    expect(call.data[2].rank).toBe(3)
-    expect(call.data[0].contestId).toBe(CONTEST_ID)
-    expect(call.data[0].entryId).toBe('entry-1')
+    expect(call.data[0]!.rank).toBe(1)
+    expect(call.data[1]!.rank).toBe(2)
+    expect(call.data[2]!.rank).toBe(3)
+    expect(call.data[0]!.contestId).toBe(CONTEST_ID)
+    expect(call.data[0]!.entryId).toBe('entry-1')
   })
 })

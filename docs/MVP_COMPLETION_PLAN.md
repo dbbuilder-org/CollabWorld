@@ -1,3 +1,5 @@
+> **Superseded by:** [ROADMAP-2026-03-29.md](ROADMAP-2026-03-29.md) — Updated 2026-03-29. Sprints A–H all complete.
+
 # Collab World v2 — MVP Completion Plan
 **Date:** 2026-03-27
 **Goal:** v2 must be better than and fully include all of v1 — every feature, all content, all flows.

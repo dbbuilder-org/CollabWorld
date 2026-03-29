@@ -214,4 +214,63 @@ describe('POST /api/v1/webhooks/stripe', () => {
     const body = await res.json()
     expect(body.received).toBe(true)
   })
+
+  it('updates subscriptionPlan and status on customer.subscription.updated (active)', async () => {
+    process.env.STRIPE_SECRET_KEY = 'sk_test_123'
+    process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test'
+    const { db } = await import('@collabworld/db')
+    mockConstructEvent.mockReturnValueOnce({
+      type: 'customer.subscription.updated',
+      data: { object: { customer: 'cus_abc', status: 'active' } },
+    })
+    vi.mocked(db.user.updateMany).mockResolvedValueOnce({ count: 1 })
+    const POST = await getHandler()
+    const res = await POST(makeRequest('{}'))
+    expect(res.status).toBe(200)
+    expect(db.user.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { stripeCustomerId: 'cus_abc' },
+        data: expect.objectContaining({ subscriptionPlan: 'premium', subscriptionStatus: 'active' }),
+      })
+    )
+  })
+
+  it('downgrades plan to free on customer.subscription.updated (past_due)', async () => {
+    process.env.STRIPE_SECRET_KEY = 'sk_test_123'
+    process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test'
+    const { db } = await import('@collabworld/db')
+    mockConstructEvent.mockReturnValueOnce({
+      type: 'customer.subscription.updated',
+      data: { object: { customer: 'cus_abc', status: 'past_due' } },
+    })
+    vi.mocked(db.user.updateMany).mockResolvedValueOnce({ count: 1 })
+    const POST = await getHandler()
+    const res = await POST(makeRequest('{}'))
+    expect(res.status).toBe(200)
+    expect(db.user.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ subscriptionPlan: 'free', subscriptionStatus: 'past_due' }),
+      })
+    )
+  })
+
+  it('resets plan to free on customer.subscription.deleted', async () => {
+    process.env.STRIPE_SECRET_KEY = 'sk_test_123'
+    process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test'
+    const { db } = await import('@collabworld/db')
+    mockConstructEvent.mockReturnValueOnce({
+      type: 'customer.subscription.deleted',
+      data: { object: { customer: 'cus_abc', status: 'canceled' } },
+    })
+    vi.mocked(db.user.updateMany).mockResolvedValueOnce({ count: 1 })
+    const POST = await getHandler()
+    const res = await POST(makeRequest('{}'))
+    expect(res.status).toBe(200)
+    expect(db.user.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { stripeCustomerId: 'cus_abc' },
+        data: expect.objectContaining({ subscriptionPlan: 'free', subscriptionStatus: 'cancelled' }),
+      })
+    )
+  })
 })

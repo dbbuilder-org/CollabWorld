@@ -75,11 +75,11 @@ describe('PATCH /api/v1/admin/contests/[id]/status', () => {
     vi.mocked(auth).mockReturnValue({
       userId: 'user_admin_123',
       sessionClaims: { publicMetadata: { role: 'admin' } },
-    } as ReturnType<typeof auth>)
+    } as unknown as ReturnType<typeof auth>)
   })
 
   it('returns 401 when unauthenticated', async () => {
-    vi.mocked(auth).mockReturnValue({ userId: null, sessionClaims: null } as ReturnType<typeof auth>)
+    vi.mocked(auth).mockReturnValue({ userId: null, sessionClaims: null } as unknown as ReturnType<typeof auth>)
     const PATCH = await getStatusHandler()
     const req = new NextRequest(STATUS_URL, {
       method: 'PATCH',
@@ -93,7 +93,7 @@ describe('PATCH /api/v1/admin/contests/[id]/status', () => {
     vi.mocked(auth).mockReturnValue({
       userId: 'user_fan',
       sessionClaims: { publicMetadata: { role: 'creator' } },
-    } as ReturnType<typeof auth>)
+    } as unknown as ReturnType<typeof auth>)
     const PATCH = await getStatusHandler()
     const req = new NextRequest(STATUS_URL, {
       method: 'PATCH',
@@ -196,11 +196,11 @@ describe('POST /api/v1/contests (admin create)', () => {
     vi.mocked(auth).mockReturnValue({
       userId: 'user_admin_123',
       sessionClaims: { publicMetadata: { role: 'admin' } },
-    } as ReturnType<typeof auth>)
+    } as unknown as ReturnType<typeof auth>)
   })
 
   it('returns 401 when unauthenticated', async () => {
-    vi.mocked(auth).mockReturnValue({ userId: null, sessionClaims: null } as ReturnType<typeof auth>)
+    vi.mocked(auth).mockReturnValue({ userId: null, sessionClaims: null } as unknown as ReturnType<typeof auth>)
     const { POST } = await getContestsHandlers()
     const req = new NextRequest(CONTESTS_URL, {
       method: 'POST',
@@ -214,7 +214,7 @@ describe('POST /api/v1/contests (admin create)', () => {
     vi.mocked(auth).mockReturnValue({
       userId: 'user_fan',
       sessionClaims: { publicMetadata: { role: 'fan' } },
-    } as ReturnType<typeof auth>)
+    } as unknown as ReturnType<typeof auth>)
     const { POST } = await getContestsHandlers()
     const req = new NextRequest(CONTESTS_URL, {
       method: 'POST',

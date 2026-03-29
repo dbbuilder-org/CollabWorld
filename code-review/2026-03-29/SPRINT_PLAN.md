@@ -1,3 +1,5 @@
+> **Superseded by:** [ROADMAP-2026-03-29.md](../../docs/ROADMAP-2026-03-29.md) — All Sprint 1 + Sprint 2 items complete.
+
 # Sprint Plan — 2026-03-29
 
 ## Completed This Session

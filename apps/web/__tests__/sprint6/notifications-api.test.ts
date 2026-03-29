@@ -82,7 +82,7 @@ describe('GET /api/v1/notifications', () => {
     mockNotifFindMany.mockResolvedValue([])
     const { GET } = await import('@/app/api/v1/notifications/route')
     await GET(makeRequest('/api/v1/notifications'))
-    const callArgs = mockNotifFindMany.mock.calls[0][0]
+    const callArgs = mockNotifFindMany.mock.calls[0]![0]
     expect(callArgs.where).not.toHaveProperty('readAt')
   })
 })

@@ -8,11 +8,8 @@ function UpgradeButton() {
   async function handleUpgrade() {
     const res = await fetch('/api/v1/subscriptions/checkout', { method: 'POST' })
     if (res.ok) {
-      const { url } = await res.json()
+      const { url } = await res.json() as { url: string }
       if (url) router.push(url)
-    } else {
-      const err = await res.json().catch(() => ({}))
-      console.error('[pricing] checkout error:', err)
     }
   }
 
