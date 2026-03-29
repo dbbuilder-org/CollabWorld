@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
+export const dynamic = 'force-dynamic'
+
 interface Prize {
   rank: number
   description: string
@@ -14,6 +16,8 @@ export default function AdminNewContestPage() {
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [rulesText, setRulesText] = useState('')
+  const [thumbnailUrl, setThumbnailUrl] = useState('')
   const [entryDeadline, setEntryDeadline] = useState('')
   const [votingStart, setVotingStart] = useState('')
   const [votingEnd, setVotingEnd] = useState('')
@@ -58,6 +62,8 @@ export default function AdminNewContestPage() {
         body: JSON.stringify({
           title,
           description,
+          rulesText: rulesText || undefined,
+          thumbnailUrl: thumbnailUrl || undefined,
           entryDeadline,
           votingStart,
           votingEnd,
@@ -89,7 +95,7 @@ export default function AdminNewContestPage() {
   return (
     <div className="max-w-2xl space-y-6">
       <div>
-        <h1 className="text-3xl font-black text-white mb-2">New Contest</h1>
+        <h1 className="font-serif font-bold text-3xl text-white mb-2">New Contest</h1>
         <p className="text-zinc-400">Create a new contest. It will start in draft status.</p>
       </div>
 
@@ -108,7 +114,7 @@ export default function AdminNewContestPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Contest title"
-            className="w-full bg-zinc-900 border border-zinc-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500"
+            className="w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-2xl px-3 py-2 focus:outline-none focus:border-yellow-500/50"
           />
         </div>
 
@@ -133,7 +139,7 @@ export default function AdminNewContestPage() {
               type="datetime-local"
               value={entryDeadline}
               onChange={(e) => setEntryDeadline(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-2xl px-3 py-2 focus:outline-none focus:border-yellow-500/50"
             />
           </div>
           <div>
@@ -143,7 +149,7 @@ export default function AdminNewContestPage() {
               type="datetime-local"
               value={votingStart}
               onChange={(e) => setVotingStart(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-2xl px-3 py-2 focus:outline-none focus:border-yellow-500/50"
             />
           </div>
           <div>
@@ -153,7 +159,7 @@ export default function AdminNewContestPage() {
               type="datetime-local"
               value={votingEnd}
               onChange={(e) => setVotingEnd(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-2xl px-3 py-2 focus:outline-none focus:border-yellow-500/50"
             />
           </div>
           <div>
@@ -163,9 +169,33 @@ export default function AdminNewContestPage() {
               type="datetime-local"
               value={contestEnd}
               onChange={(e) => setContestEnd(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-2xl px-3 py-2 focus:outline-none focus:border-yellow-500/50"
             />
           </div>
+        </div>
+
+        {/* Rules Text */}
+        <div>
+          <label className="block text-zinc-400 text-sm mb-1">Rules Text</label>
+          <textarea
+            value={rulesText}
+            onChange={(e) => setRulesText(e.target.value)}
+            rows={4}
+            placeholder="Contest rules..."
+            className="w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-2xl px-3 py-2 focus:outline-none focus:border-yellow-500/50 resize-none"
+          />
+        </div>
+
+        {/* Thumbnail URL */}
+        <div>
+          <label className="block text-zinc-400 text-sm mb-1">Thumbnail URL</label>
+          <input
+            type="url"
+            value={thumbnailUrl}
+            onChange={(e) => setThumbnailUrl(e.target.value)}
+            placeholder="https://..."
+            className="w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-2xl px-3 py-2 focus:outline-none focus:border-yellow-500/50"
+          />
         </div>
 
         {/* Max Entries */}
@@ -177,7 +207,7 @@ export default function AdminNewContestPage() {
             value={maxEntries}
             onChange={(e) => setMaxEntries(e.target.value)}
             placeholder="Unlimited"
-            className="w-full bg-zinc-900 border border-zinc-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500"
+            className="w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-2xl px-3 py-2 focus:outline-none focus:border-yellow-500/50"
           />
         </div>
 
@@ -239,7 +269,7 @@ export default function AdminNewContestPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors"
+          className="w-full bg-yellow-400 hover:bg-yellow-300 disabled:opacity-50 text-black font-bold py-3 rounded-full uppercase tracking-widest text-sm transition-all"
         >
           {submitting ? 'Creating...' : 'Create Contest'}
         </button>

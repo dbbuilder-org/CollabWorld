@@ -5,6 +5,8 @@ import { getRoleFromMetadata } from '@/lib/auth'
 import { createReferralLink } from '@/lib/referral'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://collabworld.io'
 
 function statusBadgeClass(status: string): string {

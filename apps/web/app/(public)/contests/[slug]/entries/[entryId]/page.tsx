@@ -1,11 +1,14 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { auth } from '@clerk/nextjs/server'
+import { db } from '@collabworld/db'
 import LikeButton from '@/components/engagement/LikeButton'
 import VoteButton from '@/components/engagement/VoteButton'
 import ShareButton from '@/components/engagement/ShareButton'
 import CommentSection from '@/components/engagement/CommentSection'
 import MuxVideoPlayer from '@/components/entries/MuxVideoPlayer'
+
+export const dynamic = 'force-dynamic'
 
 interface EntryDetail {
   id: string
@@ -50,11 +53,32 @@ interface PageProps {
 }
 
 export default async function EntryDetailPage({ params }: PageProps) {
-  const entry = await getEntry(params.entryId)
-  if (!entry) notFound()
-
   const { userId } = auth()
   const isAuthenticated = !!userId
+
+  const [entry, dbUser] = await Promise.all([
+    getEntry(params.entryId),
+    userId
+      ? db.user.findUnique({ where: { clerkId: userId }, select: { id: true } })
+      : Promise.resolve(null),
+  ])
+  if (!entry) notFound()
+
+  const [existingLike, existingVote] = dbUser
+    ? await Promise.all([
+        db.entryEngagement.findFirst({
+          where: { entryId: params.entryId, userId: dbUser.id, type: 'like' },
+          select: { id: true },
+        }),
+        db.entryEngagement.findFirst({
+          where: { entryId: params.entryId, userId: dbUser.id, type: 'vote' },
+          select: { id: true },
+        }),
+      ])
+    : [null, null]
+
+  const initialLiked = !!existingLike
+  const initialVoted = !!existingVote
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -104,7 +128,7 @@ export default async function EntryDetailPage({ params }: PageProps) {
         <div className="flex items-center gap-2 py-4 border-t border-b border-zinc-800 mb-8">
           <LikeButton
             entryId={entry.id}
-            initialLiked={false}
+            initialLiked={initialLiked}
             initialCount={entry.likeCount}
             isAuthenticated={isAuthenticated}
           />
@@ -113,7 +137,7 @@ export default async function EntryDetailPage({ params }: PageProps) {
             <VoteButton
               entryId={entry.id}
               contestStatus={entry.contest.status}
-              hasVoted={false}
+              hasVoted={initialVoted}
               voteCount={entry.voteCount}
               isAuthenticated={isAuthenticated}
             />

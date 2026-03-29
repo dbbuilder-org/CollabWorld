@@ -220,7 +220,7 @@ export const brand = {
 
   // Badge pill (inline status)
   badge: (variant: keyof typeof colors.status) => {
-    const s = colors.status[variant]
+    const s = colors.status[variant]!
     return `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${s.bg} ${s.text} border ${s.border}`
   },
 

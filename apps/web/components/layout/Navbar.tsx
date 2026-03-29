@@ -26,6 +26,9 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-6">
+          <Link href="/feed" className="text-zinc-400 hover:text-white text-sm transition-colors">
+            Videos
+          </Link>
           <Link href="/contests" className="text-zinc-400 hover:text-white text-sm transition-colors">
             Contests
           </Link>

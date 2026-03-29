@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react'
 
+export const dynamic = 'force-dynamic'
+
 interface AnalyticsData {
   registrationsByDay: Array<{ date: string; count: number }>
   entriesByDay: Array<{ date: string; count: number }>

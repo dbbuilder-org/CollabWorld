@@ -3,6 +3,9 @@ import { redirect } from 'next/navigation'
 import { db } from '@collabworld/db'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
 import Link from 'next/link'
+import BanButton from '@/components/admin/BanButton'
+
+export const dynamic = 'force-dynamic'
 
 const PAGE_SIZE = 20
 
@@ -45,6 +48,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
         displayName: true,
         accountType: true,
         isActive: true,
+        isBanned: true,
         createdAt: true,
       },
     }),
@@ -97,7 +101,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
               <th className="text-left text-zinc-400 font-medium px-4 py-3">Type</th>
               <th className="text-left text-zinc-400 font-medium px-4 py-3">Status</th>
               <th className="text-left text-zinc-400 font-medium px-4 py-3">Joined</th>
-              <th className="px-4 py-3"></th>
+              <th className="text-left text-zinc-400 font-medium px-4 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -109,26 +113,38 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                 </td>
                 <td className="px-4 py-3 text-zinc-300 capitalize">{u.accountType}</td>
                 <td className="px-4 py-3">
-                  <span
-                    className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${
-                      u.isActive
-                        ? 'bg-green-900/30 border-green-800 text-green-400'
-                        : 'bg-red-900/30 border-red-800 text-red-400'
-                    }`}
-                  >
-                    {u.isActive ? 'Active' : 'Suspended'}
-                  </span>
+                  <div className="flex flex-col gap-1">
+                    <span
+                      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit ${
+                        u.isActive
+                          ? 'bg-green-900/30 border-green-800 text-green-400'
+                          : 'bg-red-900/30 border-red-800 text-red-400'
+                      }`}
+                    >
+                      {u.isActive ? 'Active' : 'Suspended'}
+                    </span>
+                    {u.isBanned && (
+                      <span className="inline-flex items-center rounded-full border border-red-800 bg-red-900/30 px-2 py-0.5 text-xs font-medium text-red-400 w-fit">
+                        Banned
+                      </span>
+                    )}
+                  </div>
                 </td>
                 <td className="px-4 py-3 text-zinc-400">
                   {new Date(u.createdAt).toLocaleDateString()}
                 </td>
-                <td className="px-4 py-3 text-right">
-                  <Link
-                    href={`/admin/users/${u.id}`}
-                    className="text-indigo-400 hover:text-indigo-300 text-xs font-medium"
-                  >
-                    View
-                  </Link>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <Link
+                      href={`/admin/users/${u.id}`}
+                      className="text-yellow-400 hover:text-yellow-300 text-xs font-medium"
+                    >
+                      View
+                    </Link>
+                    {u.accountType !== 'admin' && (
+                      <BanButton userId={u.id} isBanned={u.isBanned} />
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

@@ -92,6 +92,23 @@ export async function updateEntryScoreWithCounts(
   }
 }
 
+export type TimeFilter = 'today' | 'week' | 'all'
+
+function getTimeFilterCutoff(timeFilter: TimeFilter): Date | null {
+  const now = new Date()
+  if (timeFilter === 'today') {
+    const cutoff = new Date(now)
+    cutoff.setHours(0, 0, 0, 0)
+    return cutoff
+  }
+  if (timeFilter === 'week') {
+    const cutoff = new Date(now)
+    cutoff.setDate(cutoff.getDate() - 7)
+    return cutoff
+  }
+  return null
+}
+
 /**
  * Get full leaderboard for a contest (with entry + creator info).
  * Falls back to Postgres aggregate (Redis path requires contestId lookup in entries).
@@ -99,11 +116,18 @@ export async function updateEntryScoreWithCounts(
 export async function getContestLeaderboard(
   contestId: string,
   db: PrismaClient,
-  redisClient: typeof redis
+  redisClient: typeof redis,
+  timeFilter: TimeFilter = 'all'
 ): Promise<LeaderboardEntry[]> {
+  const cutoff = getTimeFilterCutoff(timeFilter)
+
   // Always query DB for full entry details (Redis only stores scores)
   const entries = await db.contestEntry.findMany({
-    where: { contestId, status: 'approved' },
+    where: {
+      contestId,
+      status: 'approved',
+      ...(cutoff ? { createdAt: { gte: cutoff } } : {}),
+    },
     orderBy: { compositeScore: 'desc' },
     include: {
       creator: {

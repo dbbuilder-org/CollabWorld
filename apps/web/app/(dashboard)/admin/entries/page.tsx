@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 
+export const dynamic = 'force-dynamic'
+
 interface Entry {
   id: string
   title: string

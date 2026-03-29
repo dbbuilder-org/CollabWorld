@@ -12,6 +12,7 @@ type FormState = 'idle' | 'uploading' | 'success' | 'error'
 export default function EntrySubmissionForm({ contestId }: EntrySubmissionFormProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [isPrivate, setIsPrivate] = useState(false)
   const [titleError, setTitleError] = useState<string | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
   const [formState, setFormState] = useState<FormState>('idle')
@@ -36,7 +37,7 @@ export default function EntrySubmissionForm({ contestId }: EntrySubmissionFormPr
       const res = await fetch('/api/v1/entries/upload-url', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ contestId, title: title.trim(), description: description.trim() || undefined }),
+        body: JSON.stringify({ contestId, title: title.trim(), description: description.trim() || undefined, isPrivate }),
       })
 
       if (!res.ok) {
@@ -103,6 +104,24 @@ export default function EntrySubmissionForm({ contestId }: EntrySubmissionFormPr
           aria-label="entry-description"
         />
       </div>
+
+      <label className="flex items-start gap-3 cursor-pointer group">
+        <input
+          type="checkbox"
+          checked={isPrivate}
+          onChange={(e) => setIsPrivate(e.target.checked)}
+          disabled={isUploading}
+          className="mt-0.5 w-4 h-4 rounded border-zinc-600 bg-zinc-800 accent-yellow-400 cursor-pointer"
+        />
+        <div>
+          <span className="text-sm font-medium text-zinc-300 group-hover:text-white transition-colors">
+            Keep this entry private
+          </span>
+          <p className="text-xs text-zinc-600 mt-0.5">
+            Private entries are visible only to you and contest admins — not listed publicly.
+          </p>
+        </div>
+      </label>
 
       {generalError && (
         <div className="text-red-400 text-sm bg-red-900/20 border border-red-800 rounded-xl px-4 py-3">

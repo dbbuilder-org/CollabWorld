@@ -56,6 +56,7 @@ export default function LikeButton({
       <button
         onClick={handleClick}
         aria-pressed={liked ? 'true' : 'false'}
+        aria-label={liked ? `Unlike (${count} likes)` : `Like (${count} likes)`}
         disabled={loading}
         className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors ${
           liked

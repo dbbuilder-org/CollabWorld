@@ -1,6 +1,8 @@
 import ContestCard from '@/components/contests/ContestCard'
 import type { ContestStatus } from '@/lib/contest'
 
+export const dynamic = 'force-dynamic'
+
 interface ContestListItem {
   id: string
   title: string

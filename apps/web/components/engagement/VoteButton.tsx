@@ -63,6 +63,7 @@ export default function VoteButton({
         onClick={handleClick}
         disabled={isDisabled}
         aria-pressed={voted ? 'true' : 'false'}
+        aria-label={voted ? `Voted (${count} votes)` : `Vote (${count} votes)`}
         title={
           !isVotingOpen
             ? 'Voting is not open yet'

@@ -14,10 +14,7 @@ export async function createCheckoutSession(opts: {
   successUrl: string
   cancelUrl: string
 }): Promise<string | null> {
-  if (!stripe) {
-    console.log('[stripe] Not configured')
-    return null
-  }
+  if (!stripe) return null
   const session = await stripe.checkout.sessions.create({
     mode: 'subscription',
     customer: opts.customerId,

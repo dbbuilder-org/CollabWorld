@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Webhook } from 'svix'
 import { db } from '@collabworld/db'
+import { sendEmail } from '@/lib/email'
+import { WelcomeEmail } from '@collabworld/email'
+import * as React from 'react'
 
 interface ClerkEmailAddress {
   email_address: string
@@ -70,7 +73,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           },
         })
 
-        // TODO: send welcome email via @collabworld/email
+        // Send welcome email (fire-and-forget)
+        const appUrl = process.env['NEXT_PUBLIC_APP_URL'] ?? 'https://collabworld.servicevision.io'
+        sendEmail({
+          to: email,
+          subject: 'Welcome to Collab World!',
+          react: React.createElement(WelcomeEmail, {
+            firstName: data.first_name ?? displayName,
+            role: 'fan',
+            dashboardUrl: `${appUrl}/dashboard`,
+          }),
+        }).catch(() => {})
         break
       }
 

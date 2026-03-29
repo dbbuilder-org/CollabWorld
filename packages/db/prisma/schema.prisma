@@ -71,6 +71,14 @@ enum ContentType {
   trailer
 }
 
+enum InfluencerTier {
+  nano
+  micro
+  mid_tier
+  macro
+  mega
+}
+
 enum SubscriptionPlan {
   free
   premium
@@ -109,12 +117,16 @@ model User {
   accountType   AccountType @map("account_type")
   bio           String?
   socialLinks   Json        @default("{}") @map("social_links")
-  isVerified    Boolean     @default(false) @map("is_verified")
-  isActive      Boolean     @default(true) @map("is_active")
-  referredById  String?     @map("referred_by") @db.Uuid
-  referralCode  String?     @unique @map("referral_code")
-  createdAt     DateTime    @default(now()) @map("created_at")
-  updatedAt     DateTime    @updatedAt @map("updated_at")
+  isVerified        Boolean            @default(false) @map("is_verified")
+  isActive          Boolean            @default(true) @map("is_active")
+  isBanned          Boolean            @default(false) @map("is_banned")
+  stripeCustomerId  String?            @unique @map("stripe_customer_id")
+  subscriptionPlan  SubscriptionPlan   @default(free) @map("subscription_plan")
+  subscriptionStatus SubscriptionStatus? @map("subscription_status")
+  referredById      String?            @map("referred_by") @db.Uuid
+  referralCode      String?            @unique @map("referral_code")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
 
   referredBy    User?       @relation("Referrals", fields: [referredById], references: [id])
   referrals     User[]      @relation("Referrals")
@@ -128,6 +140,7 @@ model User {
   entries           ContestEntry[]
   engagements       EntryEngagement[]
   influencerAssignments InfluencerContestAssignment[]
+  shareCodes        ShareCode[]
   notifications     Notification[]
   auditActions      AuditLog[]   @relation("AuditActor")
 
@@ -160,6 +173,7 @@ model InfluencerProfile {
   platformHandles     Json                @default("{}") @map("platform_handles")
   totalFollowers      Int                 @default(0) @map("total_followers")
   engagementRate      Decimal             @default(0) @map("engagement_rate") @db.Decimal(5, 2)
+  tier                InfluencerTier?
   agreementSignedAt   DateTime?           @map("agreement_signed_at")
   agreementVersion    String?             @map("agreement_version")
   stripeAccountId     String?             @map("stripe_account_id")
@@ -257,7 +271,9 @@ model ContestEntry {
   likeCount       Int         @default(0) @map("like_count")
   commentCount    Int         @default(0) @map("comment_count")
   shareCount      Int         @default(0) @map("share_count")
+  viewCount       Int         @default(0) @map("view_count")
   compositeScore  Decimal     @default(0) @map("composite_score") @db.Decimal(10, 2)
+  isPrivate       Boolean     @default(false) @map("is_private")
   createdAt       DateTime    @default(now()) @map("created_at")
   updatedAt       DateTime    @updatedAt @map("updated_at")
 
@@ -266,6 +282,7 @@ model ContestEntry {
   engagements EntryEngagement[]
   prizes      ContestPrize[]
   snapshots   LeaderboardSnapshot[]
+  shareCodes  ShareCode[]
 
   @@unique([contestId, creatorId])
   @@index([contestId, status])
@@ -366,4 +383,34 @@ model AuditLog {
   @@index([resourceType, resourceId])
   @@index([createdAt])
   @@map("audit_log")
+}
+
+model ShareCode {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code      String    @unique
+  entryId   String    @map("entry_id") @db.Uuid
+  userId    String?   @map("user_id") @db.Uuid
+  platform  String?
+  clickedAt DateTime? @map("clicked_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  entry ContestEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  user  User?        @relation(fields: [userId], references: [id])
+
+  @@index([entryId])
+  @@index([userId])
+  @@map("share_codes")
+}
+
+model AffiliateClick {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  affiliateCode  String   @map("affiliate_code")
+  referredUserId String?  @map("referred_user_id") @db.Uuid
+  platform       String?
+  ipAddress      String?  @map("ip_address")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@index([affiliateCode])
+  @@index([createdAt])
+  @@map("affiliate_clicks")
 }

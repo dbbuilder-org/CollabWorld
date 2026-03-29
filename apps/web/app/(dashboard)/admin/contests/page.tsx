@@ -4,6 +4,8 @@ import { db } from '@collabworld/db'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 interface PageProps {
   searchParams: { status?: string }
 }

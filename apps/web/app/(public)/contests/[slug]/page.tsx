@@ -1,10 +1,13 @@
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { getRoleFromMetadata } from '@/lib/auth'
 import StatusBadge from '@/components/contests/StatusBadge'
 import PrizeCard from '@/components/contests/PrizeCard'
 import CountdownTimer from '@/components/contests/CountdownTimer'
 import type { ContestStatus } from '@/lib/contest'
+
+export const dynamic = 'force-dynamic'
 
 interface Prize {
   id: string
@@ -71,6 +74,20 @@ function getCtaContent(
 
 interface PageProps {
   params: { slug: string }
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const contest = await getContest(params.slug)
+  if (!contest) return { title: 'Contest Not Found' }
+  return {
+    title: `${contest.title} — Collab World`,
+    description: contest.description ?? `Enter the ${contest.title} contest on Collab World. $${Number(contest.prizePoolTotal).toLocaleString()} prize pool.`,
+    openGraph: {
+      title: contest.title,
+      description: contest.description ?? undefined,
+      images: contest.thumbnailUrl ? [{ url: contest.thumbnailUrl }] : undefined,
+    },
+  }
 }
 
 export default async function ContestDetailPage({ params }: PageProps) {

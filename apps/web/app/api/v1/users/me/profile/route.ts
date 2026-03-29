@@ -11,10 +11,13 @@ const creatorSchema = z.object({
   spotifyUrl: z.string().url().optional().nullable(),
 })
 
+const INFLUENCER_TIERS = ['nano', 'micro', 'mid_tier', 'macro', 'mega'] as const
+
 const influencerSchema = z.object({
   platformHandles: z.record(z.string(), z.string()).optional(),
   totalFollowers: z.number().int().min(0).optional(),
   engagementRate: z.number().min(0).max(100).optional(),
+  tier: z.enum(INFLUENCER_TIERS).optional(),
 })
 
 const brandSchema = z.object({

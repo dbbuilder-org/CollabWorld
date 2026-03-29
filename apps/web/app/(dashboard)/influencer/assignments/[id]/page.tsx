@@ -5,6 +5,8 @@ import { getRoleFromMetadata } from '@/lib/auth'
 import { createReferralLink } from '@/lib/referral'
 import { SignAgreementButton } from './SignAgreementButton'
 
+export const dynamic = 'force-dynamic'
+
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://collabworld.io'
 
 const SERVICE_AGREEMENT_TEXT = `

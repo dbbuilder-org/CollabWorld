@@ -9,6 +9,7 @@ const bodySchema = z.object({
   contestId: z.string().uuid(),
   title: z.string().min(1).max(200),
   description: z.string().max(2000).optional(),
+  isPrivate: z.boolean().optional(),
 })
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     )
   }
 
-  const { contestId, title, description } = parsed.data
+  const { contestId, title, description, isPrivate } = parsed.data
 
   try {
     // Find the contest
@@ -89,6 +90,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         description,
         muxUploadId: uploadId,
         status: 'pending',
+        isPrivate: isPrivate ?? false,
       },
       select: { id: true },
     })

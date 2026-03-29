@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import EntryCard from '@/components/entries/EntryCard'
 
+export const dynamic = 'force-dynamic'
+
 interface EntryCreator {
   displayName: string
   avatarUrl?: string | null

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@collabworld/db'
-import { getContestLeaderboard } from '@/lib/leaderboard'
+import { getContestLeaderboard, type TimeFilter } from '@/lib/leaderboard'
 import { redis } from '@/lib/redis'
 
 interface RouteContext {
@@ -8,6 +8,12 @@ interface RouteContext {
 }
 
 export async function GET(req: NextRequest, { params }: RouteContext): Promise<NextResponse> {
+  const timeFilterParam = req.nextUrl.searchParams.get('timeFilter')
+  const timeFilter: TimeFilter =
+    timeFilterParam === 'today' ? 'today' :
+    timeFilterParam === 'week'  ? 'week'  :
+    'all'
+
   try {
     const contest = await db.contest.findUnique({
       where: { slug: params.slug },
@@ -18,7 +24,7 @@ export async function GET(req: NextRequest, { params }: RouteContext): Promise<N
       return NextResponse.json({ error: 'Contest not found' }, { status: 404 })
     }
 
-    const entries = await getContestLeaderboard(contest.id, db, redis)
+    const entries = await getContestLeaderboard(contest.id, db, redis, timeFilter)
 
     return NextResponse.json(
       {

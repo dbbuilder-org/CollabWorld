@@ -11,10 +11,7 @@ export async function sendEmail(opts: {
   react: React.ReactElement
   from?: string
 }): Promise<{ id?: string; error?: string }> {
-  if (!resend) {
-    console.log('[email] Resend not configured — skipping:', opts.subject)
-    return { id: 'dev-noop' }
-  }
+  if (!resend) return { id: 'dev-noop' }
   const from = opts.from ?? process.env.RESEND_FROM_EMAIL ?? 'noreply@collabworld.io'
   const { data, error } = await resend.emails.send({ ...opts, from })
   if (error) return { error: error.message }

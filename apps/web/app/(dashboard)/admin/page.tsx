@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import { db } from '@collabworld/db'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminDashboardPage() {
   const { userId, sessionClaims } = auth()
   if (!userId) redirect('/sign-in')

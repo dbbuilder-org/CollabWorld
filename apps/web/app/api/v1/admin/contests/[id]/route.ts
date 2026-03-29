@@ -74,11 +74,26 @@ export async function PATCH(
         )
       }
 
-      // Placeholder notification for active transition
+      // Fire-and-forget notification when contest goes active
       if (to === 'active') {
-        console.log(
-          `[NOTIFY] Contest "${existing.title}" (${existing.id}) is now ACTIVE — send notification emails`
-        )
+        import('@/lib/notify').then(({ createNotification }) => {
+          // Notify the sponsor
+          if (existing.brandSponsorId) {
+            db.user.findUnique({ where: { id: existing.brandSponsorId }, select: { clerkId: true } })
+              .then((sponsor) => {
+                if (sponsor?.clerkId) {
+                  createNotification({
+                    recipientClerkId: sponsor.clerkId,
+                    type: 'contest_active',
+                    title: 'Your contest is live!',
+                    body: `"${existing.title}" is now accepting entries.`,
+                    link: `/contests/${existing.slug}`,
+                  })
+                }
+              })
+              .catch(() => {})
+          }
+        }).catch(() => {})
       }
 
       // Snapshot leaderboard when transitioning to completed

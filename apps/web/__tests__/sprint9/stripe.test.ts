@@ -9,7 +9,7 @@ const mockConstructEvent = vi.fn()
 vi.mock('stripe', () => ({
   default: vi.fn().mockImplementation(() => ({
     checkout: { sessions: { create: mockCheckoutCreate } },
-    billing_portal: { sessions: { create: mockPortalCreate } },
+    billingPortal: { sessions: { create: mockPortalCreate } },
     subscriptions: { list: mockSubscriptionsList },
     webhooks: { constructEvent: mockConstructEvent },
   })),
