@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
 import { isAdmin, getRoleFromMetadata } from '@/lib/auth'
+import { logger } from '@/lib/logger'
 
 interface RouteContext {
   params: { id: string }
@@ -32,7 +33,7 @@ export async function DELETE(req: NextRequest, { params }: RouteContext): Promis
 
     return NextResponse.json({ ok: true }, { status: 200 })
   } catch (err) {
-    console.error('[DELETE /api/v1/admin/comments/[id]]', err)
+    logger.error('[DELETE /api/v1/admin/comments/[id]]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

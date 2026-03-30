@@ -6,6 +6,7 @@ import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
 import { canTransition } from '@/lib/contest'
 import type { ContestStatus } from '@/lib/contest'
 import { sendContestGoLiveEmail, sendVotingOpenEmail } from '@/lib/emailTriggers'
+import { logger } from '@/lib/logger'
 
 const patchStatusSchema = z.object({
   status: z.enum(['draft', 'upcoming', 'active', 'voting', 'completed', 'archived']),
@@ -91,7 +92,7 @@ export async function PATCH(
 
     return NextResponse.json({ data: updated }, { status: 200 })
   } catch (err) {
-    console.error('[PATCH /api/v1/admin/contests/[id]/status]', err)
+    logger.error('[PATCH /api/v1/admin/contests/[id]/status]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

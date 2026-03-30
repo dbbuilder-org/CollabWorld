@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@collabworld/db'
 import crypto from 'crypto'
+import { logger } from '@/lib/logger'
 
 interface MuxWebhookBody {
   type: string
@@ -47,7 +48,7 @@ function verifyMuxSignature(
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const secret = process.env.MUX_WEBHOOK_SECRET
   if (!secret) {
-    console.error('[MUX WEBHOOK] MUX_WEBHOOK_SECRET not set')
+    logger.error('[MUX WEBHOOK] MUX_WEBHOOK_SECRET not set')
     return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 })
   }
 
@@ -114,7 +115,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         break
     }
   } catch (err) {
-    console.error('[MUX WEBHOOK] DB error', err)
+    logger.error('[MUX WEBHOOK] DB error', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 

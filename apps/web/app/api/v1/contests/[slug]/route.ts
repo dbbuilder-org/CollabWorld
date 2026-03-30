@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@collabworld/db'
+import { logger } from '@/lib/logger'
 
 const HIDDEN_STATUSES = ['draft', 'archived']
 
@@ -46,7 +47,7 @@ export async function GET(
       { status: 200 }
     )
   } catch (err) {
-    console.error('[GET /api/v1/contests/[slug]]', err)
+    logger.error('[GET /api/v1/contests/[slug]]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

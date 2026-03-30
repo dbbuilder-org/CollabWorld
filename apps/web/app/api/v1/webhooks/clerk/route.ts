@@ -4,6 +4,7 @@ import { db } from '@collabworld/db'
 import { sendEmail } from '@/lib/email'
 import { WelcomeEmail } from '@collabworld/email'
 import * as React from 'react'
+import { logger } from '@/lib/logger'
 
 interface ClerkEmailAddress {
   email_address: string
@@ -119,7 +120,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ received: true }, { status: 200 })
   } catch (err) {
-    console.error('[webhook/clerk] DB error:', err)
+    logger.error('[webhook/clerk] DB error:', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

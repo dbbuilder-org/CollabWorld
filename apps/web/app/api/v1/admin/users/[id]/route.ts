@@ -3,6 +3,7 @@ import { auth } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
 import { z } from 'zod'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
+import { logger } from '@/lib/logger'
 
 const patchUserSchema = z.object({
   accountType: z
@@ -57,7 +58,7 @@ export async function GET(
 
     return NextResponse.json({ data: user }, { status: 200 })
   } catch (err) {
-    console.error('[GET /api/v1/admin/users/[id]]', err)
+    logger.error('[GET /api/v1/admin/users/[id]]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -96,7 +97,7 @@ export async function PATCH(
 
     return NextResponse.json({ data: updated }, { status: 200 })
   } catch (err) {
-    console.error('[PATCH /api/v1/admin/users/[id]]', err)
+    logger.error('[PATCH /api/v1/admin/users/[id]]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

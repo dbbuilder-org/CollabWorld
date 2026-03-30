@@ -3,6 +3,7 @@ import { auth, clerkClient } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
 import { z } from 'zod'
 import type { AccountType } from '@collabworld/types'
+import { logger } from '@/lib/logger'
 
 const roleSchema = z.object({
   role: z.enum(['fan', 'creator', 'influencer', 'brand']),
@@ -67,7 +68,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ data: { role } }, { status: 200 })
   } catch (err) {
-    console.error('[POST /api/v1/users/me/role]', err)
+    logger.error('[POST /api/v1/users/me/role]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@collabworld/db'
 import { getContestLeaderboard, type TimeFilter } from '@/lib/leaderboard'
 import { redis } from '@/lib/redis'
+import { logger } from '@/lib/logger'
 
 interface RouteContext {
   params: { slug: string }
@@ -41,7 +42,7 @@ export async function GET(req: NextRequest, { params }: RouteContext): Promise<N
       }
     )
   } catch (err) {
-    console.error('[GET /api/v1/contests/[slug]/leaderboard]', err)
+    logger.error('[GET /api/v1/contests/[slug]/leaderboard]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

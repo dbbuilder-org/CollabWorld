@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
 import { isAdmin, getRoleFromMetadata } from '@/lib/auth'
+import { logger } from '@/lib/logger'
 
 interface RouteContext {
   params: { id: string }
@@ -40,7 +41,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext): Promise
 
     return NextResponse.json({ data: updated }, { status: 200 })
   } catch (err) {
-    console.error('[PATCH /api/v1/admin/users/[id]/ban]', err)
+    logger.error('[PATCH /api/v1/admin/users/[id]/ban]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

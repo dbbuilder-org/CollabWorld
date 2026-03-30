@@ -3,6 +3,7 @@ import { auth } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
 import { getRoleFromMetadata } from '@/lib/auth'
 import { createReferralLink } from '@/lib/referral'
+import { logger } from '@/lib/logger'
 
 function getInfluencerUser() {
   const { userId, sessionClaims } = auth()
@@ -57,7 +58,7 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ data: enriched }, { status: 200 })
   } catch (err) {
-    console.error('[GET /api/v1/influencers/my-assignments]', err)
+    logger.error('[GET /api/v1/influencers/my-assignments]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

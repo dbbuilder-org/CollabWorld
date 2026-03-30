@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 const patchSchema = z.object({
   displayName: z.string().min(1).max(100).optional(),
@@ -31,7 +32,7 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ data: user }, { status: 200 })
   } catch (err) {
-    console.error('[GET /api/v1/users/me]', err)
+    logger.error('[GET /api/v1/users/me]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -64,7 +65,7 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
     })
     return NextResponse.json({ data: updated }, { status: 200 })
   } catch (err) {
-    console.error('[PATCH /api/v1/users/me]', err)
+    logger.error('[PATCH /api/v1/users/me]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

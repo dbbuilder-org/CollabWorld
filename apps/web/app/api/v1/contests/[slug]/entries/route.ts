@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@collabworld/db'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 const querySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
@@ -67,7 +68,7 @@ export async function GET(req: NextRequest, { params }: RouteContext): Promise<N
       { status: 200 }
     )
   } catch (err) {
-    console.error('[GET /api/v1/contests/[slug]/entries]', err)
+    logger.error('[GET /api/v1/contests/[slug]/entries]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

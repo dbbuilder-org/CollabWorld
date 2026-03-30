@@ -4,6 +4,7 @@ import { db } from '@collabworld/db'
 import { z } from 'zod'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
 import { generateReferralCode } from '@/lib/referral'
+import { logger } from '@/lib/logger'
 
 const inviteInfluencerSchema = z.object({
   influencerClerkId: z.string().min(1),
@@ -82,7 +83,7 @@ export async function POST(
 
     return NextResponse.json({ data: assignment }, { status: 201 })
   } catch (err) {
-    console.error('[POST /api/v1/admin/contests/[id]/influencers]', err)
+    logger.error('[POST /api/v1/admin/contests/[id]/influencers]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -124,7 +125,7 @@ export async function GET(
 
     return NextResponse.json({ data: assignments }, { status: 200 })
   } catch (err) {
-    console.error('[GET /api/v1/admin/contests/[id]/influencers]', err)
+    logger.error('[GET /api/v1/admin/contests/[id]/influencers]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

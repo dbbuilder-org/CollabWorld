@@ -6,6 +6,7 @@ import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
 import { canTransition } from '@/lib/contest'
 import type { ContestStatus } from '@/lib/contest'
 import { snapshotLeaderboard } from '@/lib/leaderboard'
+import { logger } from '@/lib/logger'
 
 const patchContestSchema = z.object({
   status: z
@@ -101,7 +102,7 @@ export async function PATCH(
         try {
           await snapshotLeaderboard(params.id, db)
         } catch (snapshotErr) {
-          console.error('[snapshotLeaderboard]', snapshotErr)
+          logger.error('[snapshotLeaderboard]', snapshotErr)
           // Non-fatal — proceed with status update
         }
       }
@@ -123,7 +124,7 @@ export async function PATCH(
 
     return NextResponse.json({ data: updated }, { status: 200 })
   } catch (err) {
-    console.error('[PATCH /api/v1/admin/contests/[id]]', err)
+    logger.error('[PATCH /api/v1/admin/contests/[id]]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

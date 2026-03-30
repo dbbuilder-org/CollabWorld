@@ -4,6 +4,7 @@ import { db } from '@collabworld/db'
 import { z } from 'zod'
 import { getRoleFromMetadata } from '@/lib/auth'
 import { createDirectUploadUrl } from '@/lib/mux'
+import { logger } from '@/lib/logger'
 
 const bodySchema = z.object({
   contestId: z.string().uuid(),
@@ -97,7 +98,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ uploadUrl, entryId: entry.id }, { status: 201 })
   } catch (err) {
-    console.error('[POST /api/v1/entries/upload-url]', err)
+    logger.error('[POST /api/v1/entries/upload-url]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

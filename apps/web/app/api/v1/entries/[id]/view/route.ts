@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@collabworld/db'
+import { logger } from '@/lib/logger'
 
 interface RouteContext {
   params: { id: string }
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest, { params }: RouteContext): Promise<
 
     return NextResponse.json({ ok: true }, { status: 200 })
   } catch (err) {
-    console.error('[POST /api/v1/entries/[id]/view]', err)
+    logger.error('[POST /api/v1/entries/[id]/view]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

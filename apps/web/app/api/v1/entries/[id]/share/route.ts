@@ -5,6 +5,7 @@ import { updateEntryScore } from '@/lib/leaderboard'
 import { createRateLimiter, checkRateLimit } from '@/lib/rateLimit'
 import { redis } from '@/lib/redis'
 import { randomBytes } from 'crypto'
+import { logger } from '@/lib/logger'
 
 const rateLimiter = createRateLimiter(30, '1 m')
 
@@ -81,7 +82,7 @@ export async function POST(req: NextRequest, { params }: RouteContext): Promise<
 
     return NextResponse.json({ shareUrl, code }, { status: 200 })
   } catch (err) {
-    console.error('[POST /api/v1/entries/[id]/share]', err)
+    logger.error('[POST /api/v1/entries/[id]/share]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

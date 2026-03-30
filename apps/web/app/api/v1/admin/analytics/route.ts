@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
+import { logger } from '@/lib/logger'
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const { userId, sessionClaims } = auth()
@@ -128,7 +129,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       { status: 200 }
     )
   } catch (err) {
-    console.error('[GET /api/v1/admin/analytics]', err)
+    logger.error('[GET /api/v1/admin/analytics]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

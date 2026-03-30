@@ -4,6 +4,7 @@ import { db } from '@collabworld/db'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
 import { updateEntryScore } from '@/lib/leaderboard'
 import { redis } from '@/lib/redis'
+import { logger } from '@/lib/logger'
 
 interface RouteContext {
   params: { id: string }
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest, { params }: RouteContext): Promise<
       errors: failed,
     })
   } catch (err) {
-    console.error('[POST /api/v1/admin/contests/[id]/recompute-leaderboard]', err)
+    logger.error('[POST /api/v1/admin/contests/[id]/recompute-leaderboard]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

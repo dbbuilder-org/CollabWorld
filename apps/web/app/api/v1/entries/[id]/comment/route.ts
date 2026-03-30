@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { updateEntryScore } from '@/lib/leaderboard'
 import { createRateLimiter, checkRateLimit } from '@/lib/rateLimit'
 import { redis } from '@/lib/redis'
+import { logger } from '@/lib/logger'
 
 const rateLimiter = createRateLimiter(10, '1 m')
 
@@ -103,7 +104,7 @@ export async function POST(req: NextRequest, { params }: RouteContext): Promise<
       { status: 201 }
     )
   } catch (err) {
-    console.error('[POST /api/v1/entries/[id]/comment]', err)
+    logger.error('[POST /api/v1/entries/[id]/comment]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -140,7 +141,7 @@ export async function GET(req: NextRequest, { params }: RouteContext): Promise<N
       hasMore: offset + limit < total,
     })
   } catch (err) {
-    console.error('[GET /api/v1/entries/[id]/comment]', err)
+    logger.error('[GET /api/v1/entries/[id]/comment]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

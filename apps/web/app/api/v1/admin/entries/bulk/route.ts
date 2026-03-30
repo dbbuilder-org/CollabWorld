@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
 import { sendEntryApprovedEmail, sendEntryRejectedEmail } from '@/lib/emailTriggers'
 import { createNotification } from '@/lib/notify'
+import { logger } from '@/lib/logger'
 
 const bulkSchema = z.object({
   entryIds: z.array(z.string()).min(1).max(100),
@@ -106,7 +107,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       })
     )
   } catch (err) {
-    console.error('[POST /api/v1/admin/entries/bulk]', err)
+    logger.error('[POST /api/v1/admin/entries/bulk]', err)
     return NextResponse.json({ error: 'Transaction failed', details: String(err) }, { status: 500 })
   }
 

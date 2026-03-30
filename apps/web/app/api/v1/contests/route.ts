@@ -4,6 +4,7 @@ import { db } from '@collabworld/db'
 import { z } from 'zod'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
 import { generateSlug } from '@/lib/contest'
+import { logger } from '@/lib/logger'
 
 const PUBLIC_STATUSES = ['upcoming', 'active', 'voting'] as const
 
@@ -74,7 +75,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ data: result }, { status: 200 })
   } catch (err) {
-    console.error('[GET /api/v1/contests]', err)
+    logger.error('[GET /api/v1/contests]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -166,7 +167,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ data: contest }, { status: 201 })
   } catch (err) {
-    console.error('[POST /api/v1/contests]', err)
+    logger.error('[POST /api/v1/contests]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

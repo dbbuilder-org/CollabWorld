@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
+import { logger } from '@/lib/logger'
 
 export async function PATCH(
   _req: NextRequest,
@@ -38,7 +39,7 @@ export async function PATCH(
 
     return NextResponse.json({ data: updated }, { status: 200 })
   } catch (err) {
-    console.error('[PATCH /api/v1/notifications/[id]/read]', err)
+    logger.error('[PATCH /api/v1/notifications/[id]/read]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

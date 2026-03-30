@@ -3,6 +3,7 @@ import { auth } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
 import { z } from 'zod'
 import { getRoleFromMetadata } from '@/lib/auth'
+import { logger } from '@/lib/logger'
 
 const creatorSchema = z.object({
   genre: z.array(z.string()).optional(),
@@ -111,7 +112,7 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ error: 'Unsupported role' }, { status: 422 })
   } catch (err) {
-    console.error('[PATCH /api/v1/users/me/profile]', err)
+    logger.error('[PATCH /api/v1/users/me/profile]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

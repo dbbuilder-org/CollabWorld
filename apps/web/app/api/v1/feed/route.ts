@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@collabworld/db'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 const querySchema = z.object({
   sort:   z.enum(['trending', 'top', 'new']).default('trending'),
@@ -67,7 +68,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       { status: 200 }
     )
   } catch (err) {
-    console.error('[GET /api/v1/feed]', err)
+    logger.error('[GET /api/v1/feed]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

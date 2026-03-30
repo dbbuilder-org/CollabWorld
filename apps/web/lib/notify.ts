@@ -1,4 +1,5 @@
 import { db } from '@collabworld/db'
+import { logger } from '@/lib/logger'
 
 export async function createNotification(opts: {
   recipientClerkId: string
@@ -25,6 +26,6 @@ export async function createNotification(opts: {
     })
   } catch (err) {
     // fire-and-forget — never throws
-    console.error('[notify] createNotification error:', err)
+    logger.error('[notify] createNotification error:', err)
   }
 }

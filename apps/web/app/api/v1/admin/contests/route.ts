@@ -4,6 +4,7 @@ import { db, Prisma } from '@collabworld/db'
 import { z } from 'zod'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
 import { generateSlug } from '@/lib/contest'
+import { logger } from '@/lib/logger'
 
 const createContestSchema = z.object({
   title: z.string().min(3).max(100),
@@ -139,7 +140,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ data: contest }, { status: 201 })
   } catch (err) {
-    console.error('[POST /api/v1/admin/contests]', err)
+    logger.error('[POST /api/v1/admin/contests]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -168,7 +169,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ data: contests }, { status: 200 })
   } catch (err) {
-    console.error('[GET /api/v1/admin/contests]', err)
+    logger.error('[GET /api/v1/admin/contests]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

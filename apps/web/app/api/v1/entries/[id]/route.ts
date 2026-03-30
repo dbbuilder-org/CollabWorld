@@ -3,6 +3,7 @@ import { auth } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
 import { z } from 'zod'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
+import { logger } from '@/lib/logger'
 
 const patchSchema = z.object({
   title: z.string().min(1).max(200).optional(),
@@ -57,7 +58,7 @@ export async function GET(req: NextRequest, { params }: RouteContext): Promise<N
 
     return NextResponse.json({ data: entry }, { status: 200 })
   } catch (err) {
-    console.error('[GET /api/v1/entries/[id]]', err)
+    logger.error('[GET /api/v1/entries/[id]]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -114,7 +115,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext): Promise
 
     return NextResponse.json({ data: updated }, { status: 200 })
   } catch (err) {
-    console.error('[PATCH /api/v1/entries/[id]]', err)
+    logger.error('[PATCH /api/v1/entries/[id]]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

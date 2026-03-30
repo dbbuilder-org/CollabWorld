@@ -3,6 +3,7 @@ import { auth } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
 import { z } from 'zod'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
+import { logger } from '@/lib/logger'
 
 const reviewSchema = z.discriminatedUnion('action', [
   z.object({ action: z.literal('approve') }),
@@ -90,7 +91,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext): Promise
 
     return NextResponse.json({ data: updated }, { status: 200 })
   } catch (err) {
-    console.error('[PATCH /api/v1/admin/entries/[id]/review]', err)
+    logger.error('[PATCH /api/v1/admin/entries/[id]/review]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

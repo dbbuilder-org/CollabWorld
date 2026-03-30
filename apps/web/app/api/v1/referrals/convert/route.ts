@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { z } from 'zod'
 import { trackConversion } from '@/lib/referral'
+import { logger } from '@/lib/logger'
 
 const convertSchema = z.object({
   referralCode: z.string().min(1),
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     await trackConversion(userId, parsed.data.referralCode)
     return NextResponse.json({ success: true }, { status: 200 })
   } catch (err) {
-    console.error('[POST /api/v1/referrals/convert]', err)
+    logger.error('[POST /api/v1/referrals/convert]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

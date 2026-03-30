@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
 import { getRoleFromMetadata } from '@/lib/auth'
+import { logger } from '@/lib/logger'
 
 export async function GET(_req: NextRequest): Promise<NextResponse> {
   const { userId, sessionClaims } = auth()
@@ -36,7 +37,7 @@ export async function GET(_req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ data: entries }, { status: 200 })
   } catch (err) {
-    console.error('[GET /api/v1/entries]', err)
+    logger.error('[GET /api/v1/entries]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

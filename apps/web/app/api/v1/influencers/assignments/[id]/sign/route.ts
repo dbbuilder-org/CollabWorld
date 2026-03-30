@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
 import { getRoleFromMetadata } from '@/lib/auth'
+import { logger } from '@/lib/logger'
 
 function getInfluencerUser() {
   const { userId, sessionClaims } = auth()
@@ -60,7 +61,7 @@ export async function POST(
 
     return NextResponse.json({ data: updated }, { status: 200 })
   } catch (err) {
-    console.error('[POST /api/v1/influencers/assignments/[id]/sign]', err)
+    logger.error('[POST /api/v1/influencers/assignments/[id]/sign]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

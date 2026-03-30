@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { getRoleFromMetadata, isAdmin } from '@/lib/auth'
 import { sendEntryApprovedEmail, sendEntryRejectedEmail } from '@/lib/emailTriggers'
 import { createNotification } from '@/lib/notify'
+import { logger } from '@/lib/logger'
 
 const patchEntrySchema = z.object({
   status: z.enum(['approved', 'rejected']),
@@ -95,7 +96,7 @@ export async function PATCH(
 
     return NextResponse.json({ data: updated }, { status: 200 })
   } catch (err) {
-    console.error('[PATCH /api/v1/admin/entries/[id]]', err)
+    logger.error('[PATCH /api/v1/admin/entries/[id]]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

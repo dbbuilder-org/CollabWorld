@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 const querySchema = z.object({
   page:   z.coerce.number().int().min(1).default(1),
@@ -74,7 +75,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       { status: 200 }
     )
   } catch (err) {
-    console.error('[GET /api/v1/account/videos]', err)
+    logger.error('[GET /api/v1/account/videos]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

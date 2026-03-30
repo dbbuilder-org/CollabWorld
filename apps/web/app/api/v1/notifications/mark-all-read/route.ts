@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@collabworld/db'
+import { logger } from '@/lib/logger'
 
 export async function POST(_req: NextRequest): Promise<NextResponse> {
   const { userId } = auth()
@@ -24,7 +25,7 @@ export async function POST(_req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({ data: { count: result.count } }, { status: 200 })
   } catch (err) {
-    console.error('[POST /api/v1/notifications/mark-all-read]', err)
+    logger.error('[POST /api/v1/notifications/mark-all-read]', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
